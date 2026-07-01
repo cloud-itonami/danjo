@@ -58,7 +58,7 @@ moushibumi's neutral public-comment support (ADR-2605312400).
 
 ## 6 Pregel Cells (R0 path-reserved)
 
-All cells path-reserved under `40-engine/kotoba/crates/kotoba-kotodama/cells/danjo_*/`. Cell
+All cells path-reserved under `kotoba-lang/kotodama-cells/danjo_*/`. Cell
 modules created at R1 ratification, import-time
 `RuntimeError("danjo R0 scaffold: activate via Council ADR + R1 ratification")`.
 
