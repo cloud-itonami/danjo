@@ -58,7 +58,7 @@ constitutional:
 
 ## Architecture
 
-6 Pregel cells, each path-reserved at R0 under `40-engine/kotoba/crates/kotoba-kotodama/cells/danjo_*/`:
+6 Pregel cells, each path-reserved at R0 under `kotoba-lang/kotodama-cells/danjo_*/`:
 
 ```
 diet_statement_index ──┐
@@ -197,7 +197,7 @@ fixtures (a verdict token added to the `category` enum / a non-`const`
 R1 smoke test (when cells are created):
 
 ```bash
-cd 40-engine/kotoba/crates/kotoba-kotodama/py
+cd kotoba-lang/kotodama-py
 python -c "from kotodama.cells.danjo_diet_statement_index import _r0_marker" 2>&1 | grep "R0 scaffold"
 # ... similar for all 6 danjo_* cells
 ```
