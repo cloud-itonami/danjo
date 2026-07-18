@@ -19,7 +19,7 @@
 | 1 | ADR-2605301600 (master) + ADR-2605302245 (fiscal-flow) | ✅ | init |
 | 2 | manifest.jsonld + README + CLAUDE.md | ✅ | init |
 | 3 | Lexicon skeletons (`com.etzhayyim.danjo.*`) | ✅ | init |
-| 4 | worldwide fiscal-source registry seed (`registry/sources.seed.json`, 全件 unverified-seed) | ✅ | seed |
+| 4 | worldwide fiscal-source registry seed (`wire/registry/sources.seed.json`, 全件 unverified-seed) | ✅ | seed |
 | 5 | fail-closed registry invariants test + G14 VERIFICATION.md | ✅ | この iter |
 | 6 | `run_tests_clj.sh` の3 suite (`test_budget_ledger.clj`/`test_kotoba.clj`/`test_autorun.clj`) が dormant (実行不能) | ✅ 3/3解消 (`test_budget_ledger.clj`+`test_kotoba.clj`+`test_autorun.cljc` すべて green、`run_tests_clj.sh` 全11 suite green) | 2026-07-10 |
 
@@ -124,7 +124,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
 
 ### worldwide fiscal-source catalog hardening (2026-06-02)
 **WORLDWIDE fiscal-source 台帳の fail-closed 固定 + G14 検証ワークフロー文書化。**
-既存の `registry/sources.seed.json`(166 件 / 34 distinct jurisdiction + 国際機関
+既存の `wire/registry/sources.seed.json`(166 件 / 34 distinct jurisdiction + 国際機関
 [IMF / World Bank / OECD / UN / IATI / OGP] / sourceKind 6種: audit-institution /
 budget-portal / intl-aggregator / legislature-record / open-spending /
 procurement-system)に対し、sibling toritsugi 方式で 2 層の hardening を追加:

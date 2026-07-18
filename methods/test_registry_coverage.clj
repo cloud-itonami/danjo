@@ -9,7 +9,7 @@
 (def checks (atom 0)) (def fails (atom 0))
 (defn check [l p] (swap! checks inc) (if p (println "  ok  " l) (do (swap! fails inc) (println "  FAIL" l))))
 
-(let [registry (rc/load-registry "../registry/sources.seed.json")
+(let [registry (rc/load-registry "../wire/registry/sources.seed.json")
       rep      (rc/report registry)]
 
   ;; ── worldwide guard (mirrors test_danjo_registry_seed.py invariant #5) ──

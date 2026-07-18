@@ -1,7 +1,7 @@
 ;; registry_coverage.clj — 弾正 (danjo) fiscal-SOURCE registry HONEST coverage scorecard.
 ;; ADR-2605301600 + ADR-2605302245. Distinct from coverage.clj (which reports JP revenue-ledger
 ;; per-yen traceability): this reports the WORLDWIDE ingestion-SOURCE catalog
-;; (registry/sources.seed.json) — how many jurisdictions/sourceKinds are catalogued, and how many
+;; (wire/registry/sources.seed.json) — how many jurisdictions/sourceKinds are catalogued, and how many
 ;; are still unverified-seed (G14: verification execution is R1+, so today's honest answer is
 ;; "0 verified" — this report must say that plainly, never round up).
 (ns root.danjo.methods.registry-coverage
@@ -13,7 +13,7 @@
   (json/parse-string (slurp path) true))
 
 (defn report
-  "Honest coverage map over the fiscal-source registry (registry/sources.seed.json)."
+  "Honest coverage map over the fiscal-source registry (wire/registry/sources.seed.json)."
   [registry]
   (let [srcs (:sources registry)
         by-count (fn [k] (->> srcs (map k) frequencies (into (sorted-map))))]
@@ -58,7 +58,7 @@
      "never judges (G4); a catalogued source unlocks nothing until it clears G14 verification._\n")))
 
 (defn -main [& args]
-  (let [in  (or (first args) "../registry/sources.seed.json")
+  (let [in  (or (first args) "../wire/registry/sources.seed.json")
         out (io/file (or (second args) "../registry/COVERAGE.md"))
         rep (report (load-registry in))]
     (io/make-parents out)

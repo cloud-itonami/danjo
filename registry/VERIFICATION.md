@@ -2,7 +2,7 @@
 
 Per ADR-2605301600 + ADR-2605302245 (global fiscal-flow extension), under the
 danjo constitutional discipline (ADR-2605192100 §1.12 + §2(c)). Every
-`com.etzhayyim.danjo.fiscalSource` record in `registry/sources.seed.json` ships
+`com.etzhayyim.danjo.fiscalSource` record in `wire/registry/sources.seed.json` ships
 `verificationStatus = unverified-seed`, and **no live ingestion may run against
 an unverified-seed or stale source** (G14 + G3 passive-only). This file
 documents how a source is moved through the three tiers — the human/Council
