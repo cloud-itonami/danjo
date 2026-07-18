@@ -1,0 +1,51 @@
+{:migration/id :danjo/flat-west-standalone
+ :migration/status :standalone-content-contained
+ :migration/source "etzhayyim/root:20-actors/danjo"
+ :migration/source-revision "b0eb3573964a3e5151826646e28b19a2b68e1b76"
+ :migration/canonical-repository "https://github.com/etzhayyim/com-etzhayyim-danjo"
+ :migration/canonical-path "orgs/etzhayyim/com-etzhayyim-danjo"
+ :migration/content
+ {:root-files 64
+  :canonical-metadata "manifest.edn"
+  :retired-metadata "manifest.jsonld"
+  :root-only-integrated
+  ["cells/social_post/state_machine.cljc"
+   "manifest.edn"
+   "schema.edn"
+   "methods/registry_coverage.clj"
+   "methods/social.cljc"
+   "methods/test_registry_coverage.clj"
+   "registry/COVERAGE.md"]}
+ :migration/canonicalization
+ {:metadata :edn
+  :data :edn
+  :external-wire-root "wire/"
+  :wire-formats #{:json}
+  :deprecated-languages #{:go :tinygo}
+  :deprecated-language-action :prune-not-port}
+ :migration/verification
+ [{:command "./run_tests.sh"
+   :tests 24 :assertions 87 :failures 0 :errors 0}
+  {:command "./run_tests_clj.sh"
+   :script-checks 195
+   :clojure-tests 7 :clojure-assertions 27
+   :failures 0 :errors 0}]
+ :migration/root-action
+ {:actor-directory :replace-with-moved-edn
+  :repoint
+  ["70-tools/src/etzhayyim/tools/discovery.clj"
+   "70-tools/src/etzhayyim/tools/test_discovery.clj"
+   "70-tools/src/etzhayyim/lint/shell-baseline.edn"
+   "70-tools/scripts/lint/no-danjo-adjudication.test.mjs"
+   "00-contracts/lexicons/com/etzhayyim/danjo/README.md"]
+  :retain-central
+  ["00-contracts/lexicons/com/etzhayyim/danjo"
+   "70-tools/scripts/lint/no-danjo-adjudication.mjs"
+   "90-docs/adr/2605301600-danjo-public-accountability-oversight-tier-b-actor-r0.edn"
+   "90-docs/adr/2605302245-danjo-global-fiscal-flow-extension.edn"
+   "50-infra/etzhayyim-did-web/src/registry"
+   "50-infra/etzhayyim-did-web/public/actor/danjo"]}
+ :migration/known-gaps
+ [:root-consumers-not-yet-repointed
+  :root-tombstone-not-yet-committed
+  :west-revision-not-yet-repinned]}

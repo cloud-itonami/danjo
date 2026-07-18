@@ -1,0 +1,55 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.danjo.methodNote",
+  "description": "Open, versioned definition of ONE danjo detector heuristic. R0 skeleton per ADR-2605301600 §4 G6 (open method). Every danjo.discrepancyObservation MUST cite the methodNote CID of the heuristic that produced it, so the public can audit the DETECTOR itself, not only its output. No closed / secret scoring is permitted. Analogous to toritate's open valuation reference tables (ADR-2605301020).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "methodId",
+          "version",
+          "title",
+          "appliesToCategory",
+          "definition",
+          "inputs",
+          "attestingDid"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime"},
+          "methodId": {"type": "string", "description": "Stable slug, e.g. single-bidder-streak"},
+          "version": {"type": "string", "description": "Semantic version, e.g. v1.0.0"},
+          "title": {"type": "string", "maxLength": 256},
+          "appliesToCategory": {
+            "type": "string",
+            "description": "The discrepancyObservation.category this heuristic emits"
+          },
+          "definition": {
+            "type": "string",
+            "maxLength": 8000,
+            "description": "Full open description of the heuristic: thresholds, joins, exclusions, false-positive caveats. Plain language + precise enough to reproduce."
+          },
+          "inputs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "gov.dataset.* and corp.* lexicons the heuristic consumes"
+          },
+          "thresholdParams": {
+            "type": "string",
+            "description": "JSON-encoded threshold parameter set (e.g. {\"minConsecutive\":5}); open and versioned"
+          },
+          "knownFalsePositiveModes": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Documented FP modes (transparency requirement; prevents over-claiming)"
+          },
+          "supersedesVersion": {"type": "string"},
+          "attestingDid": {"type": "string", "format": "did"}
+        }
+      }
+    }
+  }
+}

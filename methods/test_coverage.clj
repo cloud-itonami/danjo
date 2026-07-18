@@ -11,7 +11,7 @@
 (defn check [l p] (swap! checks inc) (if p (println "  ok  " l) (do (swap! fails inc) (println "  FAIL" l))))
 
 (let [model (in/with-budget (in/ingest "../data/gov-revenue-corpus.jp.edn")
-                            (in/ingest-budget "../data/gov-fiscal-seed.jp.json"))
+                            (in/ingest-budget "../wire/data/gov-fiscal-seed.jp.json"))
       rep   (cov/report model)]
 
   ;; ── multi-year scope ──

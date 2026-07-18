@@ -14,7 +14,7 @@ data/gov-revenue-corpus.jp.edn   ── ingest.clj ──▶  model  ── reve
 
 Files: `methods/{revenue_ledger,ingest,discrepancy,taxes,org_actor,coverage,kotoba_bridge}.clj` +
 `data/{gov-revenue-seed,gov-revenue-corpus,jp-national-taxes,jp-local-taxes,jp-fiscal-orgs}.edn`
-(+ ingests danjo's existing `data/gov-fiscal-seed.jp.json`) + matching `test_*.clj`
+(+ ingests danjo's existing `wire/data/gov-fiscal-seed.jp.json`) + matching `test_*.clj`
 (154 checks, green under `bb` and `clojure`). Coverage: **FY2023+2024 · 17 国税 + 12 地方税 · 8 組織-actor**.
 
 Answers, **in Clojure on the kotoba EAVT Datom log**, the question:
@@ -77,7 +77,7 @@ IS the input**. The sibling of `budget_ledger.py`, for the revenue side, in Cloj
   `account-law` constant — NOT a fetched record. This is what keeps the traceability verdict honest.
 
 It also ingests danjo's **existing JSON budget corpus** directly — `ingest-budget` reads
-`data/gov-fiscal-seed.jp.json` (the `budget_ledger.py` `budgetRecord` shape) via a dep-free
+`wire/data/gov-fiscal-seed.jp.json` (the `budget_ledger.py` `budgetRecord` shape) via a dep-free
 `parse-json` (Long-exact, 1円), projecting `appropriation`/`outlay` rows. `with-budget` merges that
 into a revenue model. So both the EDN revenue corpus and the JSON budget corpus feed one model.
 
@@ -169,13 +169,13 @@ cd methods && bb -e '(load-file "kotoba_bridge.clj") \
 `org-view` が各組織の担当スライス(徴収する税 / 所管会計 / per-yen 可否 / 額)を返す。税・組織 datom は
 `run-cycle! :extra-datoms` で同じローカル log → kotoba bridge パイプラインに乗る。
 
-各組織は**解決可能(resolvable)**: `generate-profiles!` が `data/actors/<handle>.profile.json`
+各組織は**解決可能(resolvable)**: `generate-profiles!` が `wire/data/actors/<handle>.profile.json`
 (+ `actors.json` 索引)を生成 — `verificationMethod:[]`(no-server-key)・`keyless:true`・
 `type:gov-fiscal-mirror` の観測ミラー profile(代理・代表しない)。dep-free `->json`(`parse-json` の逆)。
 
 ```bash
 cd methods && bb -e '(load-file "org_actor.clj") \
-  ((resolve (symbol "root.danjo.methods.org-actor" "-main")) "generate")'   # → data/actors/*.json
+  ((resolve (symbol "root.danjo.methods.org-actor" "-main")) "generate")'   # → wire/data/actors/*.json
 ```
 
 ## Coverage scorecard — `coverage.clj`

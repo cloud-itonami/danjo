@@ -62,4 +62,4 @@ method that produced them.
 - `/00-contracts/lexicons/com/etzhayyim/danjo/methodNote.json` — Lexicon schema
 - `/00-contracts/lexicons/com/etzhayyim/danjo/discrepancyObservation.json` — the record a method produces
 - `/90-docs/adr/2605301600-danjo-public-accountability-oversight-tier-b-actor-r0.md` — §4 G6 open method
-- `/20-actors/toritate/valuation/` — sibling open-method-table precedent (ADR-2605301020)
+- `/orgs/etzhayyim/com-etzhayyim-toritate/valuation/` — sibling open-method-table precedent (ADR-2605301020)

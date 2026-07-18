@@ -1,0 +1,111 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.danjo.oversightReport",
+  "description": "Periodic AGGREGATE public-accountability transparency report assembled by danjo_oversight_report. R0 skeleton per ADR-2605301600 §3/§4; ref-typed nesting added (R1 hardening = additionalProperties:false). Aggregate-first (G10): publishes patterns over a reporting period via #aggregateStat; named-party content (#namedPartyEntry) permitted ONLY where source records already name the party publicly AND severity-gated + Council-reviewed under 1 SBT = 1 vote (G10/G11), each entry carrying its gate evidence. Council Lv6+ ≥3 attestation chain; IPFS-pinned (replication ≥2). NON-adjudicating: the report summarizes factual cross-references and any external-counsel referrals; it renders no verdict (G4).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "jurisdiction",
+          "periodStart",
+          "periodEnd",
+          "summary",
+          "observationCids",
+          "councilAttestations",
+          "nonAdjudicatingNotice",
+          "publishedCid",
+          "attestingDid"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime"},
+          "jurisdiction": {"type": "string", "maxLength": 8},
+          "periodStart": {"type": "string", "format": "datetime"},
+          "periodEnd": {"type": "string", "format": "datetime"},
+          "summary": {
+            "type": "string",
+            "maxLength": 8000,
+            "description": "Aggregate-first factual summary of the period's cross-reference patterns. No legal conclusions (G4)."
+          },
+          "observationCids": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "danjo.discrepancyObservation CIDs included in this report"
+          },
+          "aggregateStats": {
+            "type": "array",
+            "description": "Structured aggregate counts by category/severity (no per-individual scoring; anti-individualism N9). Replaces the R0 freeform JSON string.",
+            "items": {"type": "ref", "ref": "#aggregateStat"}
+          },
+          "namedPartySection": {
+            "type": "array",
+            "description": "Named-party entries published under G10 (source already names party + severity-gated + Council-reviewed + 1 SBT = 1 vote). Each entry carries its own gate evidence. Empty unless all gates pass.",
+            "items": {"type": "ref", "ref": "#namedPartyEntry"}
+          },
+          "councilAttestations": {
+            "type": "array",
+            "minLength": 3,
+            "items": {"type": "string", "format": "did"},
+            "description": "≥3 distinct Council Lv6+ DIDs"
+          },
+          "oneSbtOneVoteChainCid": {
+            "type": "string",
+            "description": "If namedPartySection is non-empty: the 1 SBT = 1 vote publication-approval chain hash (G11; ADR-2605192315 pattern)"
+          },
+          "nonAdjudicatingNotice": {"type": "boolean", "const": true},
+          "stateAlignedFlagsPresent": {"type": "boolean", "default": false, "description": "True if any source carried stateAlignedFlag (G13)"},
+          "publishedCid": {"type": "string", "description": "IPFS CID of the published report (replication ≥2)"},
+          "attestingDid": {"type": "string", "format": "did"}
+        }
+      }
+    },
+    "aggregateStat": {
+      "type": "object",
+      "description": "One aggregate count cell. Aggregate-only — never a per-individual figure (N9 anti-individualism / G6).",
+      "required": ["category", "count"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "discrepancyObservation category this count aggregates"
+        },
+        "severity": {
+          "type": "string",
+          "knownValues": ["info", "notable", "elevated", "all"],
+          "default": "all"
+        },
+        "count": {"type": "integer", "minimum": 0},
+        "methodNoteCids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Distinct method versions that contributed to this count (G6 reproducibility)."
+        }
+      }
+    },
+    "namedPartyEntry": {
+      "type": "object",
+      "description": "A named-party publication entry. STRUCTURAL G10/G11: every required field is a gate — without the council-review CID and the 1-SBT-1-vote chain hash, the entry is incomplete and MUST NOT publish.",
+      "required": [
+        "observationCid",
+        "councilReviewCid",
+        "oneSbtOneVoteChainCid"
+      ],
+      "properties": {
+        "observationCid": {
+          "type": "string",
+          "description": "The danjo.discrepancyObservation CID whose #namedPartyRef parties are being published"
+        },
+        "councilReviewCid": {
+          "type": "string",
+          "description": "Council Lv6+ named-party-publication review record CID (G10 severity-gated review)"
+        },
+        "oneSbtOneVoteChainCid": {
+          "type": "string",
+          "description": "1 SBT = 1 vote publication-approval chain hash (G11)"
+        }
+      }
+    }
+  }
+}

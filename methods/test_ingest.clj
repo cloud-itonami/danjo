@@ -62,7 +62,7 @@
           (in/parse-json "{\"a\":1,\"b\":[true,false,null],\"c\":{\"d\":\"x\"}}")))
 (check "parse-json keeps big integers exact (1円)"
        (= 5464300000000 (get (in/parse-json "{\"n\":5464300000000}") "n")))
-(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.json")]
+(let [b (in/ingest-budget "../wire/data/gov-fiscal-seed.jp.json")]
   (check "ingest-budget: 2 appropriations + 3 outlays"
          (and (= 2 (count (:appropriations b))) (= 3 (count (:outlays b)))))
   (check "budget records carry budgetRecord CIDs (G5 ≥2)"

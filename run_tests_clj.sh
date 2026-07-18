@@ -4,14 +4,23 @@
 set -uo pipefail
 cd "$(dirname "$0")/methods"
 
+repo_dir="$(cd .. && pwd)"
+classpath_dir="$(mktemp -d "${TMPDIR:-/tmp}/danjo-classpath.XXXXXX")"
+trap 'rm -rf "$classpath_dir"' EXIT
+ln -s "$repo_dir" "$classpath_dir/danjo"
+
 RUNNER="${CLJ_RUNNER:-bb}"   # CLJ_RUNNER=clojure ./run_tests_clj.sh  to use the JVM
 command -v "$RUNNER" >/dev/null 2>&1 || { echo "runner '$RUNNER' not found"; exit 127; }
 
-SUITES=( "test_revenue_ledger.clj" "test_ingest.clj" "test_discrepancy.clj" "test_taxes.clj" "test_org_actor.clj" "test_coverage.clj" "test_kotoba_bridge.clj" "test_budget_ledger.clj" "test_kotoba.clj" "test_autorun.clj" )
+SUITES=( "test_revenue_ledger.clj" "test_ingest.clj" "test_discrepancy.clj" "test_taxes.clj" "test_org_actor.clj" "test_coverage.clj" "test_registry_coverage.clj" "test_kotoba_bridge.clj" "test_budget_ledger.clj" "test_kotoba.clj" "test_autorun.cljc" )
 
+# test_autorun.cljc :requires the danjo.methods.* namespaces (unlike its load-file-based siblings),
+# so it needs 20-actors/ on the classpath for `danjo/methods/*.cljc` to resolve as `danjo.methods.*`.
 fail=0
 for s in "${SUITES[@]}"; do
-  if [ "$RUNNER" = "clojure" ]; then RUN=( clojure -M "$s" ); else RUN=( "$RUNNER" "$s" ); fi
+  if [ "$s" = "test_autorun.cljc" ]; then
+    if [ "$RUNNER" = "clojure" ]; then RUN=( clojure -Sdeps "{:paths [\"$classpath_dir\"]}" -M "$s" ); else RUN=( "$RUNNER" -cp "$classpath_dir" "$s" ); fi
+  elif [ "$RUNNER" = "clojure" ]; then RUN=( clojure -M "$s" ); else RUN=( "$RUNNER" "$s" ); fi
   if "${RUN[@]}"; then :; else echo "FAILED: $s"; fail=1; fi
 done
 

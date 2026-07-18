@@ -98,13 +98,32 @@
              :fiscal-year (:fiscal-year r) :amount-jpy (non-neg-int! r)
              :source-record-cids (cids r) :tier "A"}))}))
 
+(defn- unblob
+  "A datomized attribute value may be a pr-str'd blob (nested map/vector-of-map that doesn't
+   fit a scalar Datomic valueType) — parse it back to data. Non-blob values pass through."
+  [v]
+  (if (string? v)
+    (try (let [parsed (edn/read-string v)] (if (coll? parsed) parsed v))
+         (catch Exception _ v))
+    v))
+
+(defn- reconstitute-entity
+  "Reconstitutes a datomized tx-data entity ([{:db/id … :ns/k v …}]) back into the original
+   bare, un-namespaced map so downstream key lookups (:records, :source-sensor, …) keep
+   working unchanged. Tolerates both the tx-data shape and a legacy bare map."
+  [content]
+  (if (and (vector? content) (seq content) (map? (first content)) (contains? (first content) :db/id))
+    (into {} (map (fn [[k v]] [(keyword (name k)) (unblob v)]))
+          (dissoc (first content) :db/id))
+    content))
+
 (defn load-corpus
   "Read the pre-published corpus EDN (passive, G3). Defaults to the actor data dir."
   ([] (load-corpus nil))
   ([path]
    (let [f (io/file (or path "20-actors/danjo/data/gov-revenue-corpus.jp.edn"))
          f (if (.exists f) f (io/file "../data/gov-revenue-corpus.jp.edn"))]
-     (edn/read-string (slurp f)))))
+     (reconstitute-entity (edn/read-string (slurp f))))))
 
 (defn ingest
   "Convenience: load + project the JP revenue corpus into the model."
@@ -214,8 +233,8 @@
   "Read + project the JSON budget corpus (defaults to danjo's gov-fiscal-seed.jp.json)."
   ([] (ingest-budget nil))
   ([path]
-   (let [f (io/file (or path "20-actors/danjo/data/gov-fiscal-seed.jp.json"))
-         f (if (.exists f) f (io/file "../data/gov-fiscal-seed.jp.json"))]
+   (let [f (io/file (or path "20-actors/danjo/wire/data/gov-fiscal-seed.jp.json"))
+         f (if (.exists f) f (io/file "../wire/data/gov-fiscal-seed.jp.json"))]
      (ingest-budget-corpus (parse-json (slurp f))))))
 
 (defn with-budget

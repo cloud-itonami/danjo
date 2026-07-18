@@ -39,13 +39,32 @@
   "../data/persisted/danjo.revenue.datoms.kotoba.edn")
 
 ;; ── load ──────────────────────────────────────────────────────────────────────
+(defn- unblob
+  "A datomized attribute value may be a pr-str'd blob (nested map/vector-of-map that doesn't
+   fit a scalar Datomic valueType) — parse it back to data. Non-blob values pass through."
+  [v]
+  (if (string? v)
+    (try (let [parsed (edn/read-string v)] (if (coll? parsed) parsed v))
+         (catch Exception _ v))
+    v))
+
+(defn- reconstitute-entity
+  "Reconstitutes a datomized tx-data entity ([{:db/id … :ns/k v …}]) back into the original
+   bare, un-namespaced map so downstream key lookups (:accounts, :revenue-lines, …) keep
+   working unchanged. Tolerates both the tx-data shape and a legacy bare map."
+  [content]
+  (if (and (vector? content) (seq content) (map? (first content)) (contains? (first content) :db/id))
+    (into {} (map (fn [[k v]] [(keyword (name k)) (unblob v)]))
+          (dissoc (first content) :db/id))
+    content))
+
 (defn load-seed
   "Read the representative JP revenue seed (EDN). Path defaults to the actor data dir."
   ([] (load-seed nil))
   ([path]
    (let [f (io/file (or path "20-actors/danjo/data/gov-revenue-seed.jp.edn"))
          f (if (.exists f) f (io/file "data/gov-revenue-seed.jp.edn"))]
-     (edn/read-string (slurp f)))))
+     (reconstitute-entity (edn/read-string (slurp f))))))
 
 ;; ── pure index over the seed (the in-memory "db") ───────────────────────────────
 (defn index

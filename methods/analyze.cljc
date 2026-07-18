@@ -325,8 +325,8 @@
            arg-after (fn [flag dflt]
                        (let [i (.indexOf argv flag)]
                          (if (>= i 0) (io/file (nth argv (inc i))) dflt)))
-           corpus-f (arg-after "--corpus" (io/file here "data" "corpus.seed.json"))
-           methods-f (arg-after "--methods" (io/file here "methods" "v1-jp-seed.json"))
+           corpus-f (arg-after "--corpus" (io/file here "wire" "data" "corpus.seed.json"))
+           methods-f (arg-after "--methods" (io/file here "wire" "methods" "v1-jp-seed.json"))
            corpus (load-json corpus-f)
            methods (load-json methods-f)
            obs (run-all corpus methods)]

@@ -26,10 +26,29 @@
    :special-account   {:traceable? true  :per-yen? true  :reason :earmarked-special-account
                        :note "特別会計へ繰入される特定財源。閉じた会計境界内で繰入額→歳出を1円単位で照合できる。"}})
 
+(defn- unblob
+  "A datomized attribute value may be a pr-str'd blob (nested map/vector-of-map that doesn't
+   fit a scalar Datomic valueType) — parse it back to data. Non-blob values pass through."
+  [v]
+  (if (string? v)
+    (try (let [parsed (edn/read-string v)] (if (coll? parsed) parsed v))
+         (catch Exception _ v))
+    v))
+
+(defn- reconstitute-entity
+  "Reconstitutes a datomized tx-data entity ([{:db/id … :ns/k v …}]) back into the original
+   bare, un-namespaced map so downstream key lookups (:taxes, …) keep working unchanged.
+   Tolerates both the tx-data shape and a legacy bare map."
+  [content]
+  (if (and (vector? content) (seq content) (map? (first content)) (contains? (first content) :db/id))
+    (into {} (map (fn [[k v]] [(keyword (name k)) (unblob v)]))
+          (dissoc (first content) :db/id))
+    content))
+
 (defn- read-edn [path fallback]
   (let [f (io/file (or path fallback))
         f (if (.exists f) f (io/file (str "../data/" (.getName (io/file fallback)))))]
-    (edn/read-string (slurp f))))
+    (reconstitute-entity (edn/read-string (slurp f)))))
 
 (defn load-taxes
   "National-tax registry (jp-national-taxes.edn)."

@@ -1,0 +1,64 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.danjo.crossReferenceLink",
+  "description": "Typed FACTUAL edge between two open-government records, or between a gov.dataset record and a corp identity-registry entity, computed by danjo_crossref_engine. R0 skeleton per ADR-2605301600 §3. Each link cites the public basis of the assertion; it is the substrate from which danjo.discrepancyObservation records are derived. NON-adjudicating: a link asserts a factual relationship (e.g. 'awardeeLei X is a control-edge of officialEntity Y per GLEIF L2 / OpenCorporates'), never wrongdoing.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt",
+          "linkType",
+          "fromRef",
+          "toRef",
+          "basisRecordCids",
+          "sourceCellDid",
+          "attestingDid"
+        ],
+        "properties": {
+          "createdAt": {"type": "string", "format": "datetime"},
+          "linkType": {
+            "type": "string",
+            "knownValues": [
+              "awardee-lei-resolves-to-entity",
+              "recipient-lei-resolves-to-entity",
+              "entity-ubo-edge",
+              "entity-officer-edge",
+              "entity-parent-subsidiary-edge",
+              "entity-control-edge",
+              "entity-direct-shareholder-edge",
+              "award-references-appropriation",
+              "statement-references-program",
+              "authority-awards-to-entity"
+            ]
+          },
+          "fromRef": {
+            "type": "string",
+            "description": "Source side: a gov.dataset.* record CID/at-uri OR a corp registry entity id (LEI)"
+          },
+          "toRef": {
+            "type": "string",
+            "description": "Target side: a gov.dataset.* record CID/at-uri OR a corp registry entity id (LEI)"
+          },
+          "basisRecordCids": {
+            "type": "array",
+            "minLength": 1,
+            "items": {"type": "string"},
+            "description": "Public-record CIDs that justify the edge (gov.dataset.* and/or corp.{leiReference,ownershipEdge})"
+          },
+          "confidence": {
+            "type": "string",
+            "knownValues": ["exact-id-match", "registry-asserted", "name-normalized-candidate"],
+            "description": "Match basis. `name-normalized-candidate` (fuzzy) MUST NOT alone ground an `elevated`-severity observation."
+          },
+          "jurisdiction": {"type": "string", "maxLength": 8},
+          "stateAlignedFlag": {"type": "boolean", "default": false},
+          "sourceCellDid": {"type": "string", "format": "did"},
+          "attestingDid": {"type": "string", "format": "did"}
+        }
+      }
+    }
+  }
+}

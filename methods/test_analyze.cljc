@@ -14,8 +14,8 @@
             [danjo.methods.analyze :as analyze]))
 
 (def actor-dir (-> *file* io/file .getParentFile .getParentFile))
-(def corpus-path (io/file actor-dir "data" "corpus.seed.json"))
-(def methods-path (io/file actor-dir "methods" "v1-jp-seed.json"))
+(def corpus-path (io/file actor-dir "wire" "data" "corpus.seed.json"))
+(def methods-path (io/file actor-dir "wire" "methods" "v1-jp-seed.json"))
 
 (defn- setup [] [(analyze/load-json corpus-path) (analyze/load-json methods-path)])
 

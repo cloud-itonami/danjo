@@ -25,10 +25,10 @@
 (def base-as-of 20260609)
 
 #?(:clj (def here (-> *file* io/file .getAbsoluteFile .getParentFile)))
-#?(:clj (def data (when here (io/file (.getParentFile here) "data"))))
-#?(:clj (def corpus-default (when data (io/file data "corpus.seed.json"))))
-#?(:clj (def methods-default (when here (io/file here "v1-jp-seed.json"))))
-#?(:clj (def log-default (when data (io/file data "persisted" "danjo.datoms.kotoba.edn"))))
+#?(:clj (def actor-dir (when here (.getParentFile here))))
+#?(:clj (def corpus-default (when actor-dir (io/file actor-dir "wire" "data" "corpus.seed.json"))))
+#?(:clj (def methods-default (when actor-dir (io/file actor-dir "wire" "methods" "v1-jp-seed.json"))))
+#?(:clj (def log-default (when actor-dir (io/file actor-dir "data" "persisted" "danjo.datoms.kotoba.edn"))))
 
 #?(:clj
    (defn run-cycle

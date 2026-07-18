@@ -137,6 +137,14 @@
 
 (def ^:private valid-record-kinds #{"appropriation" "obligation" "outlay" "subaward"})
 
+(defn- as-long
+  "Coerce a String or Number fiscalYear value to a long. `(long ...)` alone throws
+  ClassCastException on a String (e.g. a budgetRecord where fiscalYear arrived as \"2024\"
+  rather than 2024) -- gov.dataset.budgetRecord sources are not guaranteed to type it
+  consistently, so normalize-record must accept either."
+  [v]
+  (long (if (string? v) #?(:clj (Long/parseLong v) :cljs (js/parseInt v 10)) v)))
+
 (defn normalize-record
   "One ledger line from a budgetRecord. Pure; carries its own CID (G5)."
   [rec]
@@ -154,7 +162,7 @@
        "programCode"      (get rec "programCode" "")
        "amountLocal"      amount
        "currencyIso4217"  (get rec "currencyIso4217" "JPY")
-       "fiscalYear"       (long (get rec "fiscalYear" 0))
+       "fiscalYear"       (as-long (get rec "fiscalYear" 0))
        "recipientName"    (get rec "recipientName" "")
        "recipientLocalId" (get rec "recipientLocalId" "")
        "recipientLei"     (get rec "recipientLei" "")

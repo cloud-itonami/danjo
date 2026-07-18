@@ -133,7 +133,7 @@
 
 (defn -main [& args]
   (let [model (in/with-budget (in/ingest (or (first args) "../data/gov-revenue-corpus.jp.edn"))
-                              (in/ingest-budget "../data/gov-fiscal-seed.jp.json"))
+                              (in/ingest-budget "../wire/data/gov-fiscal-seed.jp.json"))
         rep   (report model)
         tax-reg (t/combine (t/load-taxes "../data/jp-national-taxes.edn")
                            (t/load-local-taxes "../data/jp-local-taxes.edn"))

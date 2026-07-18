@@ -18,7 +18,7 @@ plus periodic aggregate transparency reports.
 
 **Observation scope includes 大麻政策立法過程** (cannabis-policy legislative
 process) as a **non-adjudicating, both-views-neutral** index — the
-`cannabis-policy-legislative-trace` method (`methods/v1-jp-seed.json`) traces
+`cannabis-policy-legislative-trace` method (`wire/methods/v1-jp-seed.json`) traces
 国会会議録 mentions + the 大麻取締法 → 大麻草の栽培の規制に関する法律 (令和5年法律第84号)
 statutory change into a source-cited timeline that produces datoms only, takes
 **no 推進/反対 stance** (G4), and routes legal characterization to chigiri. It is the
@@ -58,7 +58,7 @@ moushibumi's neutral public-comment support (ADR-2605312400).
 
 ## 6 Pregel Cells (R0 path-reserved)
 
-All cells path-reserved under `kotoba-lang/kotodama-cells/danjo_*/`. Cell
+All cells path-reserved under `40-engine/kotoba/crates/kotoba-kotodama/cells/danjo_*/`. Cell
 modules created at R1 ratification, import-time
 `RuntimeError("danjo R0 scaffold: activate via Council ADR + R1 ratification")`.
 

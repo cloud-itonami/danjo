@@ -64,7 +64,7 @@
                     :source-record-cids ["only-one"] :method-note-cid "m" :non-adjudicating true}])))
 
 ;; ── JSON budget ingest feeds the reconciler (the existing danjo corpus, gov-fiscal-seed.jp.json) ──
-(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.json")]
+(let [b (in/ingest-budget "../wire/data/gov-fiscal-seed.jp.json")]
   (check "JSON budget ingest: 2 appropriations" (= 2 (count (:appropriations b))))
   (check "JSON budget ingest: 3 outlays"        (= 3 (count (:outlays b))))
   (check "JSON record CIDs are budgetRecord locators"

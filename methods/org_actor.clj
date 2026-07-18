@@ -17,12 +17,31 @@
 (alias 't  'root.danjo.methods.taxes)
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 
+(defn- unblob
+  "A datomized attribute value may be a pr-str'd blob (nested map/vector-of-map that doesn't
+   fit a scalar Datomic valueType) — parse it back to data. Non-blob values pass through."
+  [v]
+  (if (string? v)
+    (try (let [parsed (edn/read-string v)] (if (coll? parsed) parsed v))
+         (catch Exception _ v))
+    v))
+
+(defn- reconstitute-entity
+  "Reconstitutes a datomized tx-data entity ([{:db/id … :ns/k v …}]) back into the original
+   bare, un-namespaced map so downstream key lookups (:orgs, …) keep working unchanged.
+   Tolerates both the tx-data shape and a legacy bare map."
+  [content]
+  (if (and (vector? content) (seq content) (map? (first content)) (contains? (first content) :db/id))
+    (into {} (map (fn [[k v]] [(keyword (name k)) (unblob v)]))
+          (dissoc (first content) :db/id))
+    content))
+
 (defn load-orgs
   ([] (load-orgs nil))
   ([path]
    (let [f (io/file (or path "20-actors/danjo/data/jp-fiscal-orgs.edn"))
          f (if (.exists f) f (io/file "../data/jp-fiscal-orgs.edn"))]
-     (edn/read-string (slurp f)))))
+     (reconstitute-entity (edn/read-string (slurp f))))))
 
 (defn- collects [org taxes]
   "Tax ids this org collects (from the tax registry's :collected-by)."
@@ -117,10 +136,10 @@
      :provenance "representative"}))
 
 (defn generate-profiles!
-  "Write one `<handle>.profile.json` per org + an `actors.json` index under `data/actors/`.
+  "Write one `<handle>.profile.json` per org + an `actors.json` index under `wire/data/actors/`.
    Returns the list of written paths. Deterministic."
   [org-reg tax-reg out-dir]
-  (let [dir (io/file (or out-dir "../data/actors"))]
+  (let [dir (io/file (or out-dir "../wire/data/actors"))]
     (io/make-parents (io/file dir "x"))
     (let [paths (doall
                  (for [org (:orgs org-reg)]
