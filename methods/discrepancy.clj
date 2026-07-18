@@ -109,7 +109,7 @@
   (let [model (do (load-file "ingest.clj")
                   (let [in (find-ns 'root.danjo.methods.ingest)]
                     (-> ((ns-resolve in 'ingest) "../data/gov-revenue-corpus.jp.edn")
-                        ((ns-resolve in 'with-budget) ((ns-resolve in 'ingest-budget) "../data/gov-fiscal-seed.jp.json")))))]
+                        ((ns-resolve in 'with-budget) ((ns-resolve in 'ingest-budget) "../data/gov-fiscal-seed.jp.edn")))))]
     (doseq [r (reconcile model 2024)]
       (println (:category r) (:program-code r) "A=" (:appropriated r) "O=" (:outlaid r) "Δ=" (:delta r)))
     (println "observations:" (count (observations model 2024)))))

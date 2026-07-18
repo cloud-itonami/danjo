@@ -2,6 +2,7 @@
 ;; Run: bb test_org_actor.clj   (or: clojure -M test_org_actor.clj)   from methods/.
 (ns root.danjo.methods.test-org-actor
   (:require [clojure.string :as str]
+            [clojure.edn]
             [clojure.java.io :as io]))
 
 (load-file "org_actor.clj")
@@ -64,8 +65,8 @@
     (check "org-profile type is gov-fiscal-mirror" (= "gov-fiscal-mirror" (:type prof)))
     (check "org-profile did matches the org DID"
            (= "did:web:etzhayyim.com:actor:jp-nta" (:did prof)))
-    (check "->json round-trips through parse-json"
-           (= (get ((ns-resolve in 'parse-json) (o/->json prof)) "did") (:did prof))))
+    (check "->edn round-trips through edn/read-string"
+           (= (:did (clojure.edn/read-string (o/->edn prof))) (:did prof))))
   (let [dir (str (System/getProperty "java.io.tmpdir") "/danjo-actors-" (rand-int 1000000))
         paths (o/generate-profiles! orgs taxes dir)]
     (check "generate-profiles! writes 8 profiles + index (9)" (= 9 (count paths)))

@@ -26,8 +26,8 @@
 
 #?(:clj (def here (-> *file* io/file .getAbsoluteFile .getParentFile)))
 #?(:clj (def data (when here (io/file (.getParentFile here) "data"))))
-#?(:clj (def corpus-default (when data (io/file data "corpus.seed.json"))))
-#?(:clj (def methods-default (when here (io/file here "v1-jp-seed.json"))))
+#?(:clj (def corpus-default (when data (io/file data "corpus.seed.edn"))))
+#?(:clj (def methods-default (when here (io/file here "v1-jp-seed.edn"))))
 #?(:clj (def log-default (when data (io/file data "persisted" "danjo.datoms.kotoba.edn"))))
 
 #?(:clj
@@ -37,8 +37,8 @@
      drives tx-id + as-of."
      ([cycle] (run-cycle cycle corpus-default methods-default log-default))
      ([cycle corpus-path methods-path log-path]
-      (let [corpus (analyze/load-json corpus-path)       ; observe — OFFLINE pre-published corpus (G3)
-            methods (analyze/load-json methods-path)      ; the OPEN method-pack (G6)
+      (let [corpus (analyze/load-data corpus-path)       ; observe — OFFLINE pre-published corpus (G3)
+            methods (analyze/load-data methods-path)      ; the OPEN method-pack (G6)
             records (get corpus "procurementRecords" [])
             observations (analyze/run-all corpus methods) ; FACTUAL observations (G4 non-adjudicating)
             datoms (into (kotoba/graph-datoms records) (kotoba/derived-datoms observations))

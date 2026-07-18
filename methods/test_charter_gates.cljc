@@ -2,6 +2,7 @@
   "danjo — constitutional-gate conformance tests (manifest + central lexicons).
   Substrate-native Clojure (ADR-2606160842). 1:1 port of the pruned methods/test_charter_gates.py."
   (:require [clojure.test :refer [deftest is run-tests]]
+            [clojure.edn :as edn]
             [clojure.set :as set]
             [clojure.string :as str]
             [cheshire.core :as json]))
@@ -11,7 +12,15 @@
 (def ^:private actor-name (.getName actor-dir))
 (def ^:private root (.. actor-dir getParentFile getParentFile))          ;; 20-actors → ROOT
 (def ^:private lexdir (java.io.File. root (str "00-contracts/lexicons/com/etzhayyim/" actor-name)))
-(defn- manifest [] (json/parse-string (slurp (java.io.File. actor-dir "manifest.jsonld"))))
+(defn- stringify-keys [v]
+  (cond
+    (map? v) (into {} (map (fn [[k x]]
+                             [(if (keyword? k) (name k) (str k)) (stringify-keys x)]))
+                   v)
+    (vector? v) (mapv stringify-keys v)
+    (sequential? v) (map stringify-keys v)
+    :else v))
+(defn- manifest [] (stringify-keys (edn/read-string (slurp (java.io.File. actor-dir "manifest.edn")))))
 (defn- lex [name] (json/parse-string (slurp (java.io.File. lexdir (str name ".json")))))
 (defn- lex-files [] (filter #(.endsWith (.getName ^java.io.File %) ".json") (seq (.listFiles lexdir))))
 

@@ -44,7 +44,7 @@ separately (G10).
 | `award-amount-anomaly-vs-baseline` | award-amount-anomaly-vs-baseline | award is a robust-z outlier vs category baseline | legitimately large project |
 | `modification-inflation` | modification-inflation | cumulative post-award modifications > threshold of original | lawful scope expansion / escalation |
 
-All thresholds in `v1-jp-seed.json` are **placeholder planning figures**, draft
+All thresholds in `v1-jp-seed.edn` are **placeholder planning figures**, draft
 status, `councilAttestation: []`. They are not authoritative until the status
 flips to `attested` with ≥3 Council Lv6+ DIDs and they are calibrated against
 real pinned `gov.dataset.*` records.
@@ -52,7 +52,7 @@ real pinned `gov.dataset.*` records.
 ## Versioning
 
 A new method or a threshold change ships as a new `methodNote.version` (and a
-new method-pack file `vN-…json`); the prior version is referenced via
+new method-pack file `vN-…edn`); the prior version is referenced via
 `supersedesVersion`. Observations always cite the exact `methodNoteCid` they
 were computed under, so historical observations remain reproducible against the
 method that produced them.

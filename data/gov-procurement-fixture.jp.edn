@@ -1,0 +1,35 @@
+;; gov-procurement-fixture.jp.edn — 弾正 (danjo) PROCUREMENT ingest fixture (政府調達 落札実績).
+;; ADR-2605263900 W3 (jp_chotatsu fetcher output shape).
+;;
+;; HONEST STATUS (G8): this is a REPRESENTATIVE FIXTURE in the jp_chotatsu fetcher output shape
+;; (procurementRecord-conformant 落札実績 award rows), NOT a live IPFS-pinned procurementRecord
+;; corpus. The entity names / authorities are illustrative public-record-shaped examples, not
+;; asserted as freshly-fetched awards. danjo is passive-only (G3): the real corpus lands when the
+;; operator runs the jp_chotatsu fetcher against p-portal.go.jp → IPFS pin (W3). Until then this
+;; fixture lets procurement_beat + its tests run deterministically offline.
+;;
+;; The record set is shaped to exercise the (R2, Council-gated) single-bidder-streak + repeated
+;; awardee-authority pair detectors as a seed — TWO awards from the same authority to the same
+;; awardee (noticeId A1/A2, 〇〇総研株式会社 ← 総務省). danjo R1 indexes these as FACTUAL awards
+;; only; it draws NO opacity conclusion (that is R2 crossref_engine, G4 non-adjudicating).
+{;; dataset-manifest provenance — the 2nd source CID every projected procurement-award carries (G5 ≥2).
+ :manifest-cid "gov.dataset.manifest:jp_chotatsu#fixture-representative"
+ :source-sensor "jp_chotatsu"
+ :jurisdiction "JPN"
+ :verification-status "representative-fixture"
+ :records
+ [{:noticeId "RESULT-2025-0001" :recordKind "award"
+   :title "電子計算機保守業務" :contractingAuthority "総務省"
+   :awardeeName "〇〇総研株式会社" :awardeeLocalId "A-001" :awardeeLei nil
+   :awardAmountLocal 98000000 :currencyIso4217 "JPY" :awardDateUtc "2025-04-15T00:00:00Z"
+   :payloadCid "https://www.p-portal.go.jp/result/RESULT-2025-0001"}
+  {:noticeId "RESULT-2025-0002" :recordKind "award"
+   :title "電子計算機保守業務（継続）" :contractingAuthority "総務省"
+   :awardeeName "〇〇総研株式会社" :awardeeLocalId "A-001" :awardeeLei nil
+   :awardAmountLocal 102000000 :currencyIso4217 "JPY" :awardDateUtc "2025-05-20T00:00:00Z"
+   :payloadCid "https://www.p-portal.go.jp/result/RESULT-2025-0002"}
+  {:noticeId "RESULT-2025-0003" :recordKind "award"
+   :title "庁舎空調設備更新工事" :contractingAuthority "財務省"
+   :awardeeName "△△建設工業株式会社" :awardeeLocalId "B-205" :awardeeLei nil
+   :awardAmountLocal 450000000 :currencyIso4217 "JPY" :awardDateUtc "2025-06-10T00:00:00Z"
+   :payloadCid "https://www.p-portal.go.jp/result/RESULT-2025-0003"}]}

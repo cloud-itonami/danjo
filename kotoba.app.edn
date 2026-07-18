@@ -1,13 +1,34 @@
 ;; kotoba.app.edn — actor:danjo KOTOBA Mesh application manifest (observatory on-kse, ADR-2606230001 §4).
 ;; Deploy: kotoba app deploy kotoba.app.edn  (compiles methods/mesh.clj → CID → control datoms)
+;;
+;; R1 (ADR-2607180900, founder 1/1 bootstrap): the `danjo` component is now the LIVE R1
+;; ingest orchestrator — methods/mesh.clj runs the procurement + revenue + diet beats and
+;; publishes their heads + the per-yen trace summary. The hourly :tick trigger is the R1
+;; periodic heartbeat (the :kse trigger stays for on-demand observe). Live AT-Proto
+;; broadcast is still G7-gated (operator transport credential); this emits datoms + mesh
+;; kse only. DANJO_R1_COUNCIL_RATIFY_TX_HASH must be set in the cell-runner env or observe
+;; refuses (the gate is the live-activation switch).
 {:kotoba.app/name    "danjo"
- :kotoba.app/version "0.1.0"
+ :kotoba.app/version "0.2.0"
  :kotoba.app/components
  [{:name     "danjo"
-   :src      "methods/mesh.clj"                  ; Clojure default → run + on-kse
+   :src      "methods/mesh.clj"                  ; R1 orchestrator → run + on-kse + tick
    :scale    1
-   :triggers [{:type :kse :topic "etzhayyim/actor/danjo"}]
-   :requires #{:cap/kqe}}]
+   :triggers [{:type :tick :cron "17 * * * *"}                   ; R1 hourly heartbeat (ADR-2607180900)
+              {:type :kse  :topic "etzhayyim/actor/danjo"}]
+   :requires #{:cap/kqe}}
+  ;; self-publication: the actor periodically drafts its OWN history (source-cited
+  ;; oversight observations + revenue-ledger lines) + procedures (per-yen tax
+  ;; traceability) as DRY-RUN social posts, and — once it holds its own mesh-runtime
+  ;; key (self-custodied, no-server-key, ADR-2605231525) under a member CACAO leash —
+  ;; signs + emits them itself. Live broadcast stays Council Lv6+ + operator gated
+  ;; (§1.12/G11); R0 = dry-run. ADR-2606272355.
+  {:name     "danjo-social"
+   :src      "methods/social.cljc"
+   :scale    1
+   :triggers [{:type :tick :cron "0 */6 * * *"}                 ; every 6h: self-publish backlog
+              {:type :kse  :topic "etzhayyim/actor/danjo/publish"}]
+   :requires #{:cap/kqe :cap/atproto}}]
 
  :kotoba.app/placement {:spread  :zone
                         :require {:tier "edge"}}}

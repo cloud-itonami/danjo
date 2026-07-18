@@ -2,7 +2,7 @@
   "danjo 弾正 — NON-adjudicating discrepancy-observation analyzer (ADR-2605301600).
   1:1 Clojure port of `methods/analyze.py` (R0/R1, offline, stdlib-only).
 
-  Runs the OPEN detector heuristics in the method-pack (v1-jp-seed.json) over a
+  Runs the OPEN detector heuristics in the method-pack (v1-jp-seed.edn) over a
   PUBLIC procurement corpus and emits danjo.discrepancyObservation records —
   FACTUAL cross-reference patterns over the public record, NEVER a finding of
   wrongdoing. The censor's EYE, never the censor's SWORD. Every observation, by
@@ -15,10 +15,11 @@
 
   House style (mirrors inochi/rasen/tsugite ports): Python ':…' keyword strings
   stay literal strings; map keys are the JSON string keys verbatim; pure fns;
-  file/JSON I/O only at #?(:clj) edges. The method content-id reproduces Python's
+  file/EDN I/O only at #?(:clj) edges. The method content-id reproduces Python's
   `hashlib.sha256(json.dumps(method, sort_keys=True, separators=(',',':'))).hexdigest()[:12]`
   byte-for-byte (canonical JSON with ensure_ascii=True, the Python default)."
   (:require [clojure.string :as str]
+            #?(:clj [clojure.edn :as edn])
             #?(:clj [clojure.java.io :as io])))
 
 ;; ── sha-256 host seam (mirrors kotoba.datom/*sha256-hex*) ─────────────────────
@@ -140,6 +141,32 @@
      "Read + parse a JSON file (file I/O only at this edge)."
      [path]
      (parse-json (slurp (io/file (str path))))))
+
+(defn stringify-keys
+  "Normalize EDN keyword-keyed seed data to the historical JSON-loader shape."
+  [v]
+  (cond
+    (map? v) (into {} (map (fn [[k x]]
+                             [(if (keyword? k) (name k) (str k)) (stringify-keys x)]))
+                   v)
+    (vector? v) (mapv stringify-keys v)
+    (sequential? v) (map stringify-keys v)
+    :else v))
+
+#?(:clj
+   (defn load-edn
+     "Read + parse an EDN seed file, normalized to string-keyed maps."
+     [path]
+     (stringify-keys (edn/read-string (slurp (io/file (str path)))))))
+
+#?(:clj
+   (defn load-data
+     "Read EDN seed data by default; JSON remains for external compatibility only."
+     [path]
+     (let [p (str path)]
+       (if (str/ends-with? p ".edn")
+         (load-edn p)
+         (load-json p)))))
 
 ;; ── canonical JSON (Python json.dumps(sort_keys=True, separators=(',',':')) parity)
 ;; ensure_ascii=True (the Python default in analyze.method_cid) → non-ASCII chars are
@@ -282,7 +309,8 @@
         by-id (reduce (fn [m mth] (assoc m (get mth "methodId") mth))
                       {} (get methodpack "methods" []))]
     (if-let [m (get by-id "single-bidder-streak")]
-      (let [params (parse-json (get m "thresholdParams" "{}"))]
+      (let [params (let [p (get m "thresholdParams" {})]
+                     (if (string? p) (parse-json p) p))]
         (mapv #(build-observation % m) (detect-single-bidder-streak records params)))
       [])))
 
@@ -325,10 +353,10 @@
            arg-after (fn [flag dflt]
                        (let [i (.indexOf argv flag)]
                          (if (>= i 0) (io/file (nth argv (inc i))) dflt)))
-           corpus-f (arg-after "--corpus" (io/file here "data" "corpus.seed.json"))
-           methods-f (arg-after "--methods" (io/file here "methods" "v1-jp-seed.json"))
-           corpus (load-json corpus-f)
-           methods (load-json methods-f)
+           corpus-f (arg-after "--corpus" (io/file here "data" "corpus.seed.edn"))
+           methods-f (arg-after "--methods" (io/file here "methods" "v1-jp-seed.edn"))
+           corpus (load-data corpus-f)
+           methods (load-data methods-f)
            obs (run-all corpus methods)]
        (when (some #{"--out"} argv)
          (let [outdir (io/file (nth argv (inc (.indexOf argv "--out"))))]

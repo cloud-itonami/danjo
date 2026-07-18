@@ -63,11 +63,11 @@
                   [{:category :outlay-exceeds-appropriation :observed-pattern "x"
                     :source-record-cids ["only-one"] :method-note-cid "m" :non-adjudicating true}])))
 
-;; ── JSON budget ingest feeds the reconciler (the existing danjo corpus, gov-fiscal-seed.jp.json) ──
-(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.json")]
-  (check "JSON budget ingest: 2 appropriations" (= 2 (count (:appropriations b))))
-  (check "JSON budget ingest: 3 outlays"        (= 3 (count (:outlays b))))
-  (check "JSON record CIDs are budgetRecord locators"
+;; ── EDN budget ingest feeds the reconciler (the existing danjo corpus, gov-fiscal-seed.jp.edn) ──
+(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.edn")]
+  (check "EDN budget ingest: 2 appropriations" (= 2 (count (:appropriations b))))
+  (check "EDN budget ingest: 3 outlays"        (= 3 (count (:outlays b))))
+  (check "budgetRecord CIDs are budgetRecord locators"
          (every? #(str/starts-with? (first (:source-record-cids %)) "gov.dataset.budgetRecord:")
                  (:appropriations b)))
   (let [recon (d/reconcile b 2024)]

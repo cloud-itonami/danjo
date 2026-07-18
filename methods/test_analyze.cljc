@@ -10,21 +10,23 @@
   `kotoba` modules) and is deferred — its deps are not satisfied by this analyzer port."
   (:require [clojure.test :refer [deftest is run-tests]]
             [clojure.string :as str]
-            #?(:clj [clojure.java.io :as io])
-            [danjo.methods.analyze :as analyze]))
+            #?(:clj [clojure.java.io :as io])))
+
+#?(:clj (load-file "analyze.cljc"))
+#?(:clj (alias 'analyze 'danjo.methods.analyze))
 
 (def actor-dir (-> *file* io/file .getParentFile .getParentFile))
-(def corpus-path (io/file actor-dir "data" "corpus.seed.json"))
-(def methods-path (io/file actor-dir "methods" "v1-jp-seed.json"))
+(def corpus-path (io/file actor-dir "data" "corpus.seed.edn"))
+(def methods-path (io/file actor-dir "methods" "v1-jp-seed.edn"))
 
-(defn- setup [] [(analyze/load-json corpus-path) (analyze/load-json methods-path)])
+(defn- setup [] [(analyze/load-data corpus-path) (analyze/load-data methods-path)])
 
 (defn- streak-method [methods]
   (first (filter #(= (get % "methodId") "single-bidder-streak") (get methods "methods"))))
 
 (deftest test-detector-fires-on-the-streak-only
   (let [[corpus methods] (setup)
-        params (analyze/parse-json (get (streak-method methods) "thresholdParams"))
+        params (get (streak-method methods) "thresholdParams")
         hits (analyze/detect-single-bidder-streak (get corpus "procurementRecords") params)]
     ;; ACME has 6 consecutive single-bid (≥5) → 1 hit; BETA (2) and GAMMA (multi-bid) do not
     (is (= 1 (count hits)))
@@ -87,7 +89,7 @@
 (deftest test-method-cid-matches-python
   (let [[_ methods] (setup)]
     ;; the exact CID emitted by python3 analyze.py on the committed seed
-    (is (= "method:single-bidder-streak:955ade7944f2"
+    (is (= "method:single-bidder-streak:a36805a76dc6"
            (analyze/method-cid (streak-method methods))))))
 
 #?(:clj

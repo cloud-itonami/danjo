@@ -1,7 +1,7 @@
 ;; ported from 20-actors/danjo/methods/budget_ledger.py — real port replacing the
 ;; unit_refactor stage-0 "TODO: port-failed" stubs. NS fixed (root.* -> danjo.*) and the
 ;; file is now .cljc (matching the sibling analyze.cljc/autorun.cljc/kotoba.cljc convention).
-;; Self-contained (own sha-256 + JSON reader, no cheshire/data.json, no dependency on the
+;; Self-contained (own sha-256 + EDN/legacy JSON reader, no cheshire/data.json, no dependency on the
 ;; sibling analyze namespace).
 (ns danjo.methods.budget-ledger
   "budget_ledger.py — 弾正 (danjo) budget_ledger ingest method (the coded R0 method).
@@ -9,11 +9,12 @@
 
   Ingests gov.dataset.budgetRecord rows → a budget ledger grouped by
   (programCode, fiscalYear); each line carries its own deterministic CID (G5 provenance).
-  Pure; file I/O only at the load-seed/load-json edge.
+  Pure; file I/O only at the load-seed/load-data edge.
 
   House style: gov.dataset.* records stay string-keyed maps, byte-for-byte the same shapes
   Python json.loads produced; keywords are kept as ':ns/name' strings."
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            #?(:clj [clojure.edn :as edn])))
 
 ;; ── sha-256 ──────────────────────────────────────────────────────────────────
 (defn- sha256-hex
@@ -108,6 +109,26 @@
      [path]
      (parse-json (slurp (str path)))))
 
+(defn stringify-keys
+  "Normalize keyword-keyed EDN budget data to the historical JSON-loader shape."
+  [v]
+  (cond
+    (map? v) (into {} (map (fn [[k x]]
+                             [(if (keyword? k) (name k) (str k)) (stringify-keys x)]))
+                   v)
+    (vector? v) (mapv stringify-keys v)
+    (sequential? v) (map stringify-keys v)
+    :else v))
+
+#?(:clj
+   (defn load-data
+     "Read EDN seed data by default; JSON remains for external compatibility only."
+     [path]
+     (let [p (str path)]
+       (if (str/ends-with? p ".edn")
+         (stringify-keys (edn/read-string (slurp p)))
+         (load-json p)))))
+
 ;; ── canonical JSON for the CID preimage (json.dumps sort_keys, compact, ensure_ascii=False)
 (defn- json-escape-utf8 ^String [^String s]
   (str/escape s {\" "\\\"" \\ "\\\\"
@@ -125,6 +146,11 @@
                                                 (sort (keys v)))) "}")
     (sequential? v) (str "[" (str/join "," (map canonical-json-utf8 v)) "]")
     :else (throw (ex-info "canonical-json-utf8: unsupported value" {:value v}))))
+
+(defn canonical-json
+  "Public parity hook for tests: Python json.dumps(sort_keys=True, compact, ensure_ascii=False)."
+  ^String [v]
+  (canonical-json-utf8 v))
 
 (defn record-cid
   "Deterministic gov.dataset record CID: locator + sha256 content digest (G5 provenance)."
@@ -189,9 +215,9 @@
     {"lines" lines "groups" groups}))
 
 (defn load-seed
-  "Read a gov-fiscal seed JSON file → its budgetRecords list (file I/O edge)."
+  "Read a gov-fiscal seed EDN file → its budgetRecords list (file I/O edge)."
   [path]
-  (let [doc (load-json path)]
+  (let [doc (load-data path)]
     (cond
       (and (map? doc) (contains? doc "records")) (get doc "records")
       (sequential? doc)                          doc

@@ -1,0 +1,36 @@
+;; gov-diet-fixture.jp.edn — 弾正 (danjo) DIET ingest fixture (国会会議録). ADR-2605263900.
+;;
+;; HONEST STATUS (G8): this is a REPRESENTATIVE FIXTURE in the jp_kokkai_kaigiroku sensor
+;; row shape (the normalized intermediate the W1 fetcher emits), NOT a live IPFS-pinned
+;; gov.dataset.parliamentRecord corpus. The rows are modeled on the public NDL 国会会議録
+;; examples documented in 70-tools/e7m-dataset/.../jp_kokkai_kaigiroku.py (public records,
+;; 著作権法 §13 free-use) so the projection logic exercises realistic shapes; they are not
+;; asserted as a freshly-fetched corpus. danjo is passive-only (G3): the real corpus lands
+;; when the operator runs the W1 fetcher → sensor → IPFS pin (W2). Until then this fixture
+;; lets diet_beat + its tests run deterministically offline. Non-adjudicating (G4): diet
+;; statements are indexed as FACTUAL public-record references only.
+{;; dataset-manifest provenance — the 2nd source CID every projected diet-statement carries (G5 ≥2).
+ ;; clearly labeled fixture (NOT a live pin) so downstream consumers cannot mistake it for one.
+ :source-sensor "jp_kokkai_kaigiroku"
+ :jurisdiction-iso3 "JPN"
+ :legislature "jp-kokkai"
+ :verification-status "representative-fixture"
+ :dataset-pin-at "at://did:web:etzhayyim.com/fixture/gov-diet-fixture.jp"
+ :manifest-cid "gov.dataset.manifest:jp_kokkai_kaigiroku#fixture-representative"
+ ;; sensor rows (jp_kokkai_kaigiroku _normalize_meeting output shape)
+ :records
+ [{:recordId "121705254X02320250121" :sessionDateUtc "2025-01-21T00:00:00Z"
+   :payloadCid "https://kokkai.ndl.go.jp/talk/121705254X02320250121"
+   :house "衆議院" :nativeKind "本会議" :session 217 :issue "第23号"
+   :speakerName "額賀福志郎" :speakerRole "議長"
+   :bodyExcerpt "○議長(額賀君) 本会議を開会します。"}
+  {:recordId "121705254X02320250122" :sessionDateUtc "2025-01-22T00:00:00Z"
+   :payloadCid "https://kokkai.ndl.go.jp/talk/121705254X02320250122"
+   :house "衆議院" :nativeKind "予算委員会" :session 217 :issue "第5号"
+   :speakerName "山際大志郎" :speakerRole "大臣"
+   :bodyExcerpt "○大臣(山際君) 令和7年度予算案について説明いたします。"}
+  {:recordId "121712345X00120250130" :sessionDateUtc "2025-01-30T00:00:00Z"
+   :payloadCid "https://kokkai.ndl.go.jp/talk/121712345X00120250130"
+   :house "参議院" :nativeKind "本会議" :session 217 :issue "第4号"
+   :speakerName "尾辻秀久" :speakerRole "議長"
+   :bodyExcerpt "○議長(尾辻君) 参議院本会議を開会します。"}]}

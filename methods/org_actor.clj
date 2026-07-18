@@ -78,20 +78,11 @@
                      :amount-jpy (reduce + 0 (map :fy2024-amount-jpy adm))}})))
 
 ;; ── resolvable profile artifacts (entity-as-actor, ADR-2606042330) ──
-(defn ->json
-  "Minimal dep-free clj → JSON. Inverse of ingest.clj parse-json; bb + clojure."
+(defn ->edn
+  "Stable EDN profile rendering for repo-native actor artifacts."
   [x]
-  (cond
-    (nil? x)      "null"
-    (boolean? x)  (str x)
-    (number? x)   (str x)
-    (keyword? x)  (->json (subs (str x) 1))     ; :special/reconstruction → "special/reconstruction"
-    (string? x)   (str \" (-> x (str/replace "\\" "\\\\") (str/replace "\"" "\\\"")) \")
-    (map? x)      (str "{" (str/join "," (for [[k v] x]
-                                           (str (->json (if (keyword? k) (subs (str k) 1) (str k)))
-                                                ":" (->json v)))) "}")
-    (sequential? x) (str "[" (str/join "," (map ->json x)) "]")
-    :else         (->json (str x))))
+  (binding [*print-namespace-maps* false]
+    (pr-str x)))
 
 (defn org-profile
   "The entity-as-actor profile for one org: a keyless (no-server-key) observational mirror of a
@@ -117,22 +108,23 @@
      :provenance "representative"}))
 
 (defn generate-profiles!
-  "Write one `<handle>.profile.json` per org + an `actors.json` index under `data/actors/`.
+  "Write one `<handle>.profile.edn` per org + an `actors.edn` index under `data/actors/`.
    Returns the list of written paths. Deterministic."
   [org-reg tax-reg out-dir]
   (let [dir (io/file (or out-dir "../data/actors"))]
     (io/make-parents (io/file dir "x"))
     (let [paths (doall
                  (for [org (:orgs org-reg)]
-                   (let [f (io/file dir (str (:handle org) ".profile.json"))]
-                     (spit f (->json (org-profile org org-reg tax-reg)))
+                   (let [f (io/file dir (str (:handle org) ".profile.edn"))]
+                     (spit f (str (->edn (org-profile org org-reg tax-reg)) "\n"))
                      (.getPath f))))
-          index (io/file dir "actors.json")]
-      (spit index (->json {:actors (mapv (fn [o] {:handle (:handle o) :did (:did o)
-                                                  :displayName (:ja o) :type "gov-fiscal-mirror"
-                                                  :keyless true})
-                                         (:orgs org-reg))
-                           :note "keyless gov-fiscal mirror-actors (ADR-2606042330); observational only."}))
+          index (io/file dir "actors.edn")]
+      (spit index (str (->edn {:actors (mapv (fn [o] {:handle (:handle o) :did (:did o)
+                                                       :displayName (:ja o) :type "gov-fiscal-mirror"
+                                                       :keyless true})
+                                              (:orgs org-reg))
+                                :note "keyless gov-fiscal mirror-actors (ADR-2606042330); observational only."})
+                       "\n"))
       (conj (vec paths) (.getPath index)))))
 
 (defn -main [& args]

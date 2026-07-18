@@ -56,13 +56,13 @@
     (check "ingested model emits datoms"  (pos? (count ds)))
     (check "all :db/add"                   (every? #(= :db/add (first %)) ds))))
 
-;; ── JSON budget ingest (the existing danjo corpus, gov-fiscal-seed.jp.json) ──
+;; ── EDN budget ingest (the existing danjo corpus, gov-fiscal-seed.jp.edn) ──
 (check "parse-json round-trips a nested doc"
        (= {"a" 1 "b" [true false nil] "c" {"d" "x"}}
           (in/parse-json "{\"a\":1,\"b\":[true,false,null],\"c\":{\"d\":\"x\"}}")))
 (check "parse-json keeps big integers exact (1円)"
        (= 5464300000000 (get (in/parse-json "{\"n\":5464300000000}") "n")))
-(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.json")]
+(let [b (in/ingest-budget "../data/gov-fiscal-seed.jp.edn")]
   (check "ingest-budget: 2 appropriations + 3 outlays"
          (and (= 2 (count (:appropriations b))) (= 3 (count (:outlays b)))))
   (check "budget records carry budgetRecord CIDs (G5 ≥2)"

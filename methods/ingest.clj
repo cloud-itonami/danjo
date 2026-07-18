@@ -111,9 +111,9 @@
   ([] (ingest-corpus (load-corpus)))
   ([path] (ingest-corpus (load-corpus path))))
 
-;; ── budgetRecord JSON ingest (the EXISTING danjo corpus, gov-fiscal-seed.jp.json) ──
-;; danjo's appropriation/outlay corpus is JSON (budget_ledger.py shape). A dep-free JSON
-;; reader lets ingest.clj consume it directly — same passive-only (G3) discipline, no portal.
+;; ── budgetRecord EDN ingest (the EXISTING danjo corpus, gov-fiscal-seed.jp.edn) ──
+;; danjo's appropriation/outlay corpus is EDN. JSON parsing remains only for external
+;; compatibility; repo seed files stay EDN.
 
 (defn parse-json
   "Minimal RFC-8259 JSON → clj data (string keys). Integers parse as Long (1円 precision;
@@ -176,6 +176,23 @@
                   :else (throw (ex-info "json: unexpected char" {:pos @pos :c c})))))]
       (let [v (rd-val)] (ws) v))))
 
+(defn stringify-keys
+  "Normalize keyword-keyed EDN budget data to the historical JSON-loader shape."
+  [v]
+  (cond
+    (map? v) (into {} (map (fn [[k x]]
+                             [(if (keyword? k) (name k) (str k)) (stringify-keys x)]))
+                   v)
+    (vector? v) (mapv stringify-keys v)
+    (sequential? v) (map stringify-keys v)
+    :else v))
+
+(defn load-budget-data [path]
+  (let [p (str path)]
+    (if (str/ends-with? p ".edn")
+      (stringify-keys (edn/read-string (slurp (io/file p))))
+      (parse-json (slurp (io/file p))))))
+
 (defn budget-record-cid
   "gov.dataset.budgetRecord CID for a JSON (string-keyed) record — matches budget_ledger.py's
    record_cid string shape."
@@ -211,12 +228,12 @@
      :outlays        (vec (for [r recs :when (#{"outlay" "obligation" "subaward"} (get r "recordKind"))] (norm r)))}))
 
 (defn ingest-budget
-  "Read + project the JSON budget corpus (defaults to danjo's gov-fiscal-seed.jp.json)."
+  "Read + project the EDN budget corpus (defaults to danjo's gov-fiscal-seed.jp.edn)."
   ([] (ingest-budget nil))
   ([path]
-   (let [f (io/file (or path "20-actors/danjo/data/gov-fiscal-seed.jp.json"))
-         f (if (.exists f) f (io/file "../data/gov-fiscal-seed.jp.json"))]
-     (ingest-budget-corpus (parse-json (slurp f))))))
+   (let [f (io/file (or path "20-actors/danjo/data/gov-fiscal-seed.jp.edn"))
+         f (if (.exists f) f (io/file "../data/gov-fiscal-seed.jp.edn"))]
+     (ingest-budget-corpus (load-budget-data f)))))
 
 (defn with-budget
   "Merge a budget projection (its :appropriations + :outlays) into a revenue model."

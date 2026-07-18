@@ -18,7 +18,7 @@ plus periodic aggregate transparency reports.
 
 **Observation scope includes 大麻政策立法過程** (cannabis-policy legislative
 process) as a **non-adjudicating, both-views-neutral** index — the
-`cannabis-policy-legislative-trace` method (`methods/v1-jp-seed.json`) traces
+`cannabis-policy-legislative-trace` method (`methods/v1-jp-seed.edn`) traces
 国会会議録 mentions + the 大麻取締法 → 大麻草の栽培の規制に関する法律 (令和5年法律第84号)
 statutory change into a source-cited timeline that produces datoms only, takes
 **no 推進/反対 stance** (G4), and routes legal characterization to chigiri. It is the
@@ -132,7 +132,7 @@ validation lands at R1 Council attestation review.
 
 ## Related Files
 
-- `/20-actors/danjo/manifest.jsonld`
+- `/20-actors/danjo/manifest.edn`
 - `/20-actors/danjo/CLAUDE.md`
 - `/20-actors/danjo/methods/` (open, versioned detector heuristics — `v1-jp-seed`, 6 seeds; G6 open method)
 - `/70-tools/scripts/lint/no-danjo-adjudication.mjs` (G4 + G8 constitutional lint, green at R0)

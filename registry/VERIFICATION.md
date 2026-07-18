@@ -2,7 +2,7 @@
 
 Per ADR-2605301600 + ADR-2605302245 (global fiscal-flow extension), under the
 danjo constitutional discipline (ADR-2605192100 §1.12 + §2(c)). Every
-`com.etzhayyim.danjo.fiscalSource` record in `registry/sources.seed.json` ships
+`com.etzhayyim.danjo.fiscalSource` record in `registry/sources.seed.edn` ships
 `verificationStatus = unverified-seed`, and **no live ingestion may run against
 an unverified-seed or stale source** (G14 + G3 passive-only). This file
 documents how a source is moved through the three tiers — the human/Council
@@ -40,7 +40,7 @@ recognized-international-body domain — never a third-party blog or aggregator)
    tag) is correct for the publishing authority.
 4. **`sourceKind`** — correctly classifies the dataset
    (`budget-portal` / `open-spending` / `procurement-system` /
-   `audit-institution` / `legislature-record` / `intl-aggregator`); must be in
+   `audit-institution` / `oversight-institution` / `legislature-record` / `intl-aggregator`); must be in
    the allowed catalog set (machine-pinned, see below).
 5. **`datasetUrl` + `format`** — the dataset URL resolves to the actual data
    (not a landing page), and `format` (HTML / CSV / JSON / API / XBRL / etc.)
