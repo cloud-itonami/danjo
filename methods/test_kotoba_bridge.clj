@@ -70,5 +70,50 @@
        (or (some? (System/getenv kb/operator-did-env))    ; (skip if env happens to be set)
            (throws? #(kb/operator-bearer))))
 
+
+;; ── internal-trust header (ADR-2608124000, "clients first") ──
+;; kotoba-server's require_internal_trust gate returns success while
+;; KOTOBA_INTERNAL_SECRET is unset, and it is unset across the fleet — so sending
+;; this header today changes nothing on the wire. These checks pin the shape NOW
+;; so arming the server later is a one-variable decision, not a fleet-wide
+;; outage. Values below are obviously synthetic; no real secret is read anywhere.
+(def synthetic-trust "synthetic-internal-trust-not-a-real-secret")
+(def synthetic-bearer "synthetic.operator.bearer")
+
+(check "trust header name is x-internal-trust"
+       (= "x-internal-trust" kb/internal-trust-header))
+(check "reads the SAME var the server and gateway read"
+       (= "KOTOBA_INTERNAL_SECRET" kb/internal-trust-env))
+(check "trust header PRESENT when configured"
+       (= synthetic-trust (get (kb/request-headers synthetic-bearer synthetic-trust)
+                               "x-internal-trust")))
+(check "trust header ABSENT when unconfigured"
+       (not (contains? (kb/request-headers synthetic-bearer nil) "x-internal-trust")))
+(check "blank trust is absent, not an empty header"
+       (not (contains? (kb/request-headers synthetic-bearer "  ") "x-internal-trust")))
+;; positive control: the pre-existing headers still behave, with and without trust
+(check "Authorization still sent when a bearer exists"
+       (= (str "Bearer " synthetic-bearer)
+          (get (kb/request-headers synthetic-bearer synthetic-trust) "Authorization")))
+(check "Authorization still omitted with no bearer"
+       (not (contains? (kb/request-headers nil synthetic-trust) "Authorization")))
+(check "Content-Type unchanged"
+       (= "application/json" (get (kb/request-headers nil nil) "Content-Type")))
+;; the no-op property: unconfigured produces exactly the historical header map
+(check "unconfigured header map is exactly what it always was"
+       (= {"Content-Type" "application/json" "Authorization" (str "Bearer " synthetic-bearer)}
+          (kb/request-headers synthetic-bearer nil)))
+;; the absence is a value, not just a log line
+(check "status reports :unconfigured when absent"
+       (= :unconfigured (with-redefs [kb/internal-trust (constantly nil)]
+                          (kb/internal-trust-status))))
+(check "status reports :configured when present"
+       (= :configured (with-redefs [kb/internal-trust (constantly synthetic-trust)]
+                        (kb/internal-trust-status))))
+;; positive control: the host allowlist is unaffected by a configured secret
+(check "allowlist STILL refuses off-fleet with trust configured"
+       (with-redefs [kb/internal-trust (constantly synthetic-trust)]
+         (throws? #(kb/assert-kotoba! "http://evil.example:8077/x"))))
+
 (println (format "── kotoba-bridge: %d checks, %d failures ──" @checks @fails))
 (when (pos? @fails) (System/exit 1))
