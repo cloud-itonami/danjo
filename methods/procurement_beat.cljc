@@ -25,7 +25,7 @@
   Pure projection + file I/O behind #?(:clj …); runs under bb and clojure. Deterministic
   (caller supplies tx-id + as-of). Env-var gate DANJO_R1_COUNCIL_RATIFY_TX_HASH at the beat entry."
   (:require [danjo.methods.kotoba :as kotoba]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             #?(:clj [clojure.edn :as edn])
             #?(:clj [clojure.java.io :as io])))
 
@@ -119,7 +119,7 @@
              []
              records)]
     (doseq [d out]
-      (let [attr (str/lower-case (str (nth d 2)))]
+      (let [attr (str/lower (str (nth d 2)))]
         (when (some #(str/includes? attr %) kotoba/forbidden-verdict-tokens)
           (throw (ex-info (str "G4: verdict attr " (pr-str (nth d 2))
                                " is unrepresentable in a danjo procurement datom")

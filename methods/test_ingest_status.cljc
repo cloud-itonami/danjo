@@ -3,7 +3,7 @@
   clojure.test + require. These are pure observability fns (no gate, no I/O) — ADR-2607180900."
   (:require [clojure.test :refer [deftest is testing run-tests]]
             [danjo.methods.ingest-status :as ingest]
-            [clojure.string :as str]))
+            [kotoba.lang.text :as str]))
 
 (deftest procurement-status-shape
   (testing "procurement cell: fetcher landed, operator pull+pin pending; persists nothing (G8)"

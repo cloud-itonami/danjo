@@ -7,7 +7,7 @@
   (:require [clojure.test :refer [deftest is testing run-tests]]
             [danjo.methods.diet-beat :as diet]
             [danjo.methods.kotoba :as kotoba]
-            [clojure.string :as str]))
+            [kotoba.lang.text :as str]))
 
 (def fixture
   {:manifest-cid "gov.dataset.manifest:jp_kokkai_kaigiroku#test"
@@ -39,7 +39,7 @@
                        (nth d 3))]
       (is (seq stmt-flags) "diet-statement entities carry :danjo.obs/non-adjudicating")
       (is (every? true? stmt-flags))
-      (doseq [a (map #(str/lower-case (str %)) (map #(nth % 2) datoms))]
+      (doseq [a (map #(str/lower (str %)) (map #(nth % 2) datoms))]
         (is (not (some #(str/includes? a %) kotoba/forbidden-verdict-tokens))
             (str "no verdict token in attr " a))))))
 

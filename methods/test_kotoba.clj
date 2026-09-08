@@ -1,7 +1,7 @@
 ;; test_kotoba.clj — danjo local Datom-log writer: byte-identical tx_cid parity with kotoba.py
 ;; + commit-DAG round-trip + tamper-detection. Run: bb test_kotoba.clj   (from methods/).
 (ns root.danjo.methods.test-kotoba
-  (:require [clojure.string :as str])
+  (:require [kotoba.lang.text :as str])
   (:import [java.io File]))
 
 (load-file "analyze.cljc")   ; canonical danjo analyze (ns danjo.methods.analyze); .clj dup removed
@@ -29,7 +29,7 @@
          (= 1 (count (filter (fn [[_ _ a v]] (and (= ":danjo.obs/non-adjudicating" a) (true? v))) dd))))
   (check "no derived attr contains a verdict token (G4)"
          (not-any? (fn [[_ _ a _]]
-                     (some #(str/includes? (str/lower-case (str a)) %) ko/forbidden-verdict-tokens))
+                     (some #(str/includes? (str/lower (str a)) %) ko/forbidden-verdict-tokens))
                    dd))
 
   ;; ── byte-identical tx_cid parity with kotoba.py (the content-bearing derived tx) ──

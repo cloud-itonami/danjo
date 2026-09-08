@@ -26,7 +26,7 @@
             [danjo.methods.diet-beat :as diet]
             [danjo.methods.procurement-beat :as proc]
             [danjo.methods.ingest-status :as ingest]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [clojure.java.io :as io]))
 
 ;; ── env-var gate (ADR-2607180900 R1 ratification) ──────────────────────────────

@@ -12,7 +12,7 @@
 (ns root.danjo.methods.taxes
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [kotoba.lang.text :as str]))
 
 (load-file "revenue_ledger.clj")
 (alias 'rl 'root.danjo.methods.revenue-ledger)
@@ -87,7 +87,7 @@
              (:taxes registry))]
     ;; G4: no verdict token may appear in an attribute (mirrors revenue_ledger all-datoms).
     (doseq [[_ a _] out]
-      (when (some #(str/includes? (str/lower-case (str a)) %) rl/forbidden-verdict-tokens)
+      (when (some #(str/includes? (str/lower (str a)) %) rl/forbidden-verdict-tokens)
         (throw (ex-info (str "G4: verdict attr " a) {:attr a}))))
     (vec out)))
 

@@ -21,7 +21,7 @@
 ;; danjo/methods/kotoba.py (`:tx/cid` = "b" <sha256 hex>), so the two writers interoperate.
 (ns root.danjo.methods.revenue-ledger
   (:require [clojure.edn :as edn]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [clojure.java.io :as io])
   (:import [java.security MessageDigest]))
 
@@ -170,7 +170,7 @@
                     (transfer-datoms seed) (appropriation-datoms seed) (outlay-datoms seed))]
     ;; G4 structural self-check: no verdict token in any attribute we persist.
     (doseq [[_ a _] out]
-      (let [an (str/lower-case (str a))]
+      (let [an (str/lower (str a))]
         (when (some #(str/includes? an %) forbidden-verdict-tokens)
           (throw (ex-info (str "G4: verdict attr " a " is unrepresentable") {:attr a})))))
     (vec out)))

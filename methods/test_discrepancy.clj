@@ -1,7 +1,7 @@
 ;; test_discrepancy.clj — appropriation↔outlay reconciliation → non-adjudicating observations.
 ;; Run: bb test_discrepancy.clj   (or: clojure -M test_discrepancy.clj)   from methods/.
 (ns root.danjo.methods.test-discrepancy
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (load-file "discrepancy.clj")
 (load-file "ingest.clj")
