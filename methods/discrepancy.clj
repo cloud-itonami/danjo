@@ -15,7 +15,7 @@
 ;; wrongdoing (timing / partial-corpus are declared false-positive modes). Legal
 ;; characterization happens via human counsel through chigiri — never here.
 (ns root.danjo.methods.discrepancy
-  (:require [clojure.string :as str])
+  (:require [kotoba.lang.text :as str])
   (:import [java.security MessageDigest]))
 
 (load-file "revenue_ledger.clj")
@@ -77,7 +77,7 @@
   (str "danjo-obs:" (name (:category o)) ":" (first (:source-record-cids o))))
 
 (defn- verdict-token? [x]
-  (let [s (str/lower-case (str x))]
+  (let [s (str/lower (str x))]
     (some #(str/includes? s %) rl/forbidden-verdict-tokens)))
 
 (defn observation-datoms

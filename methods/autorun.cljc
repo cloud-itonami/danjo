@@ -20,7 +20,7 @@
   (:require [danjo.methods.analyze :as analyze]
             [danjo.methods.kotoba :as kotoba]
             #?(:clj [clojure.java.io :as io])
-            #?(:clj [clojure.string :as str])))
+            #?(:clj [kotoba.lang.text :as str])))
 
 (def base-as-of 20260609)
 

@@ -1,7 +1,7 @@
 ;; test_registry_coverage.clj — honest fiscal-source registry coverage scorecard.
 ;; Run: bb test_registry_coverage.clj   from methods/.
 (ns root.danjo.methods.test-registry-coverage
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (load-file "registry_coverage.clj")
 (alias 'rc 'root.danjo.methods.registry-coverage)

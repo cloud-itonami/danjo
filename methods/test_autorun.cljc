@@ -9,7 +9,7 @@
     - G5/G6 provenance (≥2 source-record CIDs + a method-note CID per observation);
     - no external I/O (offline corpus, local persist)."
   (:require [clojure.test :refer [deftest is run-tests]]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             #?(:clj [clojure.java.io :as io])
             [danjo.methods.autorun :as autorun]
             [danjo.methods.kotoba :as kotoba]))
@@ -81,7 +81,7 @@
                               :when (and (= (nth d 1) e) (= (nth d 2) ":danjo.obs/non-adjudicating"))]
                           (nth d 3)))]
             (is (= [true] na) (str "observation " e " carries :danjo.obs/non-adjudicating true (G4)"))))
-        (let [attrs (set (map #(str/lower-case (str (nth % 2))) datoms))]
+        (let [attrs (set (map #(str/lower (str (nth % 2))) datoms))]
           (doseq [tok ["verdict" "guilt" "wrongdoing" "crime" "violation" "illegal" "fraud"]]
             (is (not (some #(str/includes? % tok) attrs))
                 (str "no verdict token `" tok "` in any attr (G4)")))))

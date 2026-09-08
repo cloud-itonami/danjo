@@ -1,7 +1,7 @@
 ;; test_coverage.clj — honest coverage report + scorecard.
 ;; Run: bb test_coverage.clj   (or: clojure -M test_coverage.clj)   from methods/.
 (ns root.danjo.methods.test-coverage
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (load-file "coverage.clj")
 (alias 'cov 'root.danjo.methods.coverage)

@@ -2,7 +2,7 @@
 ;; Run: clojure -M test_revenue_ledger.clj   (from methods/)  — or  bb test_revenue_ledger.clj
 ;; Prints its own count and exits non-zero on failure (the danjo run_tests.sh contract).
 (ns root.danjo.methods.test-revenue-ledger
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (load-file "revenue_ledger.clj")
 (alias 'rl 'root.danjo.methods.revenue-ledger)

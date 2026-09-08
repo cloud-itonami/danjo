@@ -1,7 +1,7 @@
 ;; test_org_actor.clj — per-organization keyless mirror-actors (entity-as-actor).
 ;; Run: bb test_org_actor.clj   (or: clojure -M test_org_actor.clj)   from methods/.
 (ns root.danjo.methods.test-org-actor
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [clojure.edn]
             [clojure.java.io :as io]))
 

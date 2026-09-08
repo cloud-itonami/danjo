@@ -9,7 +9,7 @@
   NOTE on scope: test_autorun.py is autorun-dependent (imports the unported `autorun` +
   `kotoba` modules) and is deferred — its deps are not satisfied by this analyzer port."
   (:require [clojure.test :refer [deftest is run-tests]]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             #?(:clj [clojure.java.io :as io])))
 
 #?(:clj (load-file "analyze.cljc"))
@@ -59,7 +59,7 @@
   (let [[corpus methods] (setup)]
     (doseq [o (analyze/run-all corpus methods)]
       (doseq [k (keys o)]
-        (is (not (some #(str/includes? (str/lower-case k) %)
+        (is (not (some #(str/includes? (str/lower k) %)
                        analyze/forbidden-verdict-fields)))))))
 
 (deftest test-build-observation-refuses-single-source

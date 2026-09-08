@@ -4,7 +4,7 @@
   (:require [clojure.test :refer [deftest is run-tests]]
             [clojure.edn :as edn]
             [clojure.set :as set]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [cheshire.core :as json]))
 
 (def ^:private here (.getParentFile (java.io.File. ^String *file*)))      ;; methods/
@@ -63,7 +63,7 @@
 (deftest test-g4-no-verdict-field
   (let [forbidden ["verdict" "accusation" "guilt" "ruling" "conviction" "truthrating"]]
     (doseq [f (lex-files)]
-      (let [keys (set (map str/lower-case (property-keys (json/parse-string (slurp f)))))]
+      (let [keys (set (map str/lower (property-keys (json/parse-string (slurp f)))))]
         (doseq [word forbidden]
           (is (not (contains? keys word))))))))
 

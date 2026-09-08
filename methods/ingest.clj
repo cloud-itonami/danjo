@@ -17,7 +17,7 @@
 (ns root.danjo.methods.ingest
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as str])
+            [kotoba.lang.text :as str])
   (:import [java.security MessageDigest]))
 
 ;; The account-boundary framework is LAW, not data (so it is a constant, not ingested).
