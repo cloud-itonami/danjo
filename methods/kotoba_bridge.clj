@@ -20,7 +20,7 @@
 ;;
 ;; Pure-ish + JVM stdlib only (java.net for the live leg); deterministic dry-run.
 (ns root.danjo.methods.kotoba-bridge
-  (:require [kotoba.lang.text :as str]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io])
   (:import [java.security MessageDigest]
            [java.net URI]

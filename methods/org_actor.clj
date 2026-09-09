@@ -11,7 +11,7 @@
 (ns root.danjo.methods.org-actor
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [kotoba.lang.text :as str]))
+            [clojure.string :as str]))
 
 (load-file "taxes.clj")
 (alias 't  'root.danjo.methods.taxes)

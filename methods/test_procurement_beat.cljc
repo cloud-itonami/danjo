@@ -5,7 +5,7 @@
   (:require [clojure.test :refer [deftest is testing run-tests]]
             [danjo.methods.procurement-beat :as proc]
             [danjo.methods.kotoba :as kotoba]
-            [kotoba.lang.text :as str]))
+            [clojure.string :as str]))
 
 (def manifest-cid "gov.dataset.manifest:jp_chotatsu#test")
 
@@ -36,7 +36,7 @@
   "Attribute names that contain a forbidden verdict token (G4 violation if non-empty)."
   []
   (for [a (attrs)
-        :let [lc (str/lower (str a))]
+        :let [lc (str/lower-case (str a))]
         :when (some #(str/includes? lc %) kotoba/forbidden-verdict-tokens)]
     a))
 

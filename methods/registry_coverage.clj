@@ -6,7 +6,7 @@
 ;; "0 verified" — this report must say that plainly, never round up).
 (ns root.danjo.methods.registry-coverage
   (:require [clojure.edn :as edn]
-            [kotoba.lang.text :as str]
+            [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (defn load-registry [path]
