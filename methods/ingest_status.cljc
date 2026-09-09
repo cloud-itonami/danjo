@@ -10,7 +10,7 @@
   These are PURE observability status fns (no I/O, no data emission, no fabrication surface) so
   they carry NO R1 gate themselves — the live-activation gate lives on the data-persisting beats
   (diet_beat / procurement_beat / mesh observe). Pure + stdlib only."
-  (:require [kotoba.lang.text :as str]))
+  (:require [clojure.string :as str]))
 
 (defn procurement-status
   "R1 procurement_graph cell status. The jp_chotatsu fetcher is implemented (W3); procurement_beat

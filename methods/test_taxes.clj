@@ -1,7 +1,7 @@
 ;; test_taxes.clj — national-tax registry + honest 3-way earmark classification.
 ;; Run: bb test_taxes.clj   (or: clojure -M test_taxes.clj)   from methods/.
 (ns root.danjo.methods.test-taxes
-  (:require [kotoba.lang.text :as str]))
+  (:require [clojure.string :as str]))
 
 (load-file "taxes.clj")
 (alias 't 'root.danjo.methods.taxes)

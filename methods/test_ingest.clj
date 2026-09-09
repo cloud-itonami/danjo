@@ -1,7 +1,7 @@
 ;; test_ingest.clj — standalone suite for the danjo revenue-corpus ingest (G3 passive-only).
 ;; Run: bb test_ingest.clj   (or: clojure -M test_ingest.clj)   from methods/.
 (ns root.danjo.methods.test-ingest
-  (:require [kotoba.lang.text]))
+  (:require [clojure.string]))
 
 (load-file "revenue_ledger.clj")
 (load-file "ingest.clj")
@@ -29,7 +29,7 @@
   (check "G5: outlays ≥2 source CIDs"
          (every? #(>= (count (:source-record-cids %)) 2) (:outlays model)))
   (check "record CIDs are gov.dataset locators"
-         (every? #(kotoba.lang.text/starts-with? (first (:source-record-cids %)) "gov.dataset.")
+         (every? #(clojure.string/starts-with? (first (:source-record-cids %)) "gov.dataset.")
                  (:revenue-lines model)))
   (check "2nd CID is the dataset manifest"
          (= (:dataset-cid model) (second (:source-record-cids (first (:revenue-lines model))))))

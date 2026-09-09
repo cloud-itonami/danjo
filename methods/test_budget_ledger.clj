@@ -1,7 +1,7 @@
 ;; test_budget_ledger.clj — budget-ledger ingest + byte-identical CID parity with budget_ledger.py.
 ;; Run: bb test_budget_ledger.clj   (or: clojure -M test_budget_ledger.clj)   from methods/.
 (ns root.danjo.methods.test-budget-ledger
-  (:require [kotoba.lang.text :as str]))
+  (:require [clojure.string :as str]))
 
 (load-file "budget_ledger.cljc")
 (alias 'bl 'danjo.methods.budget-ledger)
@@ -47,7 +47,7 @@
 (let [ln (bl/normalize-record {"recordKind" "appropriation" "amountLocal" 1 "fiscalYear" 2024 "programCode" "P"})
       ks (set (map str (keys ln)))]
   (check "G4 — no verdict/crime/guilt key on a ledger line"
-         (empty? (filter #(some (fn [t] (str/includes? (str/lower %) t))
+         (empty? (filter #(some (fn [t] (str/includes? (str/lower-case %) t))
                                 ["verdict" "guilt" "crime" "violation" "illegal" "fraud"])
                          ks))))
 

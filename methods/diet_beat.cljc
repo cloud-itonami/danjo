@@ -24,7 +24,7 @@
   entry — refuses until the Founder/Council ratification (ADR-2607180900) is set in the
   cell-runner env."
   (:require [danjo.methods.kotoba :as kotoba]
-            [kotoba.lang.text :as str]
+            [clojure.string :as str]
             #?(:clj [clojure.edn :as edn])
             #?(:clj [clojure.java.io :as io])))
 
@@ -101,7 +101,7 @@
                     []
                     records)]
     (doseq [d out]
-      (let [attr (str/lower (str (nth d 2)))]
+      (let [attr (str/lower-case (str (nth d 2)))]
         (when (some #(str/includes? attr %) kotoba/forbidden-verdict-tokens)
           (throw (ex-info (str "G4: verdict attr " (pr-str (nth d 2))
                                " is unrepresentable in a danjo diet datom")

@@ -18,7 +18,7 @@
   file/EDN I/O only at #?(:clj) edges. The method content-id reproduces Python's
   `hashlib.sha256(json.dumps(method, sort_keys=True, separators=(',',':'))).hexdigest()[:12]`
   byte-for-byte (canonical JSON with ensure_ascii=True, the Python default)."
-  (:require [kotoba.lang.text :as str]
+  (:require [clojure.string :as str]
             #?(:clj [clojure.edn :as edn])
             #?(:clj [clojure.java.io :as io])))
 
@@ -296,7 +296,7 @@
                  "sourcing" ":representative"}]
         ;; G4 structural self-check: no verdict field may have crept in.
         (doseq [k (keys obs)]
-          (when (some #(str/includes? (str/lower k) %) forbidden-verdict-fields)
+          (when (some #(str/includes? (str/lower-case k) %) forbidden-verdict-fields)
             (throw (ex-info (str "G4: verdict field " (pr-str k)
                                  " is unrepresentable in a discrepancyObservation")
                             {:gate "G4" :key k}))))

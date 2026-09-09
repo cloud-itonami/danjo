@@ -7,7 +7,7 @@
 ;; non-traceable taxes are counted as non-traceable (NOT hidden), and reconciliations split into
 ;; within-budget vs divergence vs outlay-without-appropriation-trace (partial-corpus, declared).
 (ns root.danjo.methods.coverage
-  (:require [kotoba.lang.text :as str]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (load-file "discrepancy.clj")   ; loads revenue_ledger.clj too

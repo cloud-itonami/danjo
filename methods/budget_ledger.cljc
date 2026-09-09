@@ -13,7 +13,7 @@
 
   House style: gov.dataset.* records stay string-keyed maps, byte-for-byte the same shapes
   Python json.loads produced; keywords are kept as ':ns/name' strings."
-  (:require [kotoba.lang.text :as str]
+  (:require [clojure.string :as str]
             #?(:clj [clojure.edn :as edn])))
 
 ;; ── sha-256 ──────────────────────────────────────────────────────────────────

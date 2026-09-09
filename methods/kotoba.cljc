@@ -22,7 +22,7 @@
   reproduces Python `'b' + hashlib.sha256(json.dumps({'prev':…,'datoms':…}, ensure_ascii=False,
   sort_keys=True, separators=(',',':')).encode('utf-8')).hexdigest()` byte-for-byte.
   (The Python `__main__` heartbeat printer is omitted — it is the autorun.cljc -main concern.)"
-  (:require [kotoba.lang.text :as str]))
+  (:require [clojure.string :as str]))
 
 ;; ── sha-256 host seam ─────────────────────────────────────────────────────────
 (def ^:dynamic *sha256-hex*
@@ -97,7 +97,7 @@
              observations)]
     ;; G4 structural self-check: no verdict token may appear in any attribute we persist.
     (doseq [d out]
-      (let [attr (str/lower (str (nth d 2)))]
+      (let [attr (str/lower-case (str (nth d 2)))]
         (when (some #(str/includes? attr %) forbidden-verdict-tokens)
           (throw (ex-info (str "G4: verdict attr " (pr-str (nth d 2))
                                " is unrepresentable in a danjo observation")

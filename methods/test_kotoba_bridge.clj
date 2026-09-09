@@ -2,7 +2,7 @@
 ;; Hermetic: no real network I/O (dry-run + injected transport only), the G7 discipline.
 ;; Run: bb test_kotoba_bridge.clj   (or: clojure -M test_kotoba_bridge.clj)   from methods/.
 (ns root.danjo.methods.test-kotoba-bridge
-  (:require [kotoba.lang.text :as str]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (load-file "kotoba_bridge.clj")
