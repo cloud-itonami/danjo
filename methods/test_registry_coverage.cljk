@@ -3,7 +3,7 @@
 (ns root.danjo.methods.test-registry-coverage
   (:require [clojure.string :as str]))
 
-(load-file "registry_coverage.clj")
+(load-file "registry_coverage.cljk")
 (alias 'rc 'root.danjo.methods.registry-coverage)
 
 (def checks (atom 0)) (def fails (atom 0))

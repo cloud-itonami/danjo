@@ -10,9 +10,9 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
-(load-file "discrepancy.clj")   ; loads revenue_ledger.clj too
-(load-file "ingest.clj")
-(load-file "org_actor.clj")     ; loads taxes.clj too
+(load-file "discrepancy.cljk")   ; loads revenue_ledger.clj too
+(load-file "ingest.cljk")
+(load-file "org_actor.cljk")     ; loads taxes.clj too
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 (alias 'd  'root.danjo.methods.discrepancy)
 (alias 'in 'root.danjo.methods.ingest)

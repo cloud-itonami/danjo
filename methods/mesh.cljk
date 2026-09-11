@@ -43,7 +43,7 @@
       (io/file "methods")))
 
 (defn- load-revenue-ledger! []
-  (load-file (str (io/file here "revenue_ledger.clj")))
+  (load-file (str (io/file here "revenue_ledger.cljk")))
   (deref (ns-resolve 'root.danjo.methods.revenue-ledger 'run-cycle!)))
 
 (defn- best-effort-kqe!

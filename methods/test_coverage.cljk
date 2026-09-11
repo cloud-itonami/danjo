@@ -3,7 +3,7 @@
 (ns root.danjo.methods.test-coverage
   (:require [clojure.string :as str]))
 
-(load-file "coverage.clj")
+(load-file "coverage.cljk")
 (alias 'cov 'root.danjo.methods.coverage)
 (alias 'in  'root.danjo.methods.ingest)
 

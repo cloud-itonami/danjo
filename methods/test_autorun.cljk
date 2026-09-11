@@ -111,26 +111,39 @@
 
 (deftest test-no-external-io
   (let [methods-dir autorun/here   ; the actor's methods/ dir (absolute, resolved by autorun)
-        src (str (slurp (io/file methods-dir "autorun.cljc"))
-                 (slurp (io/file methods-dir "kotoba.cljc")))]
+        src (str (slurp (io/file methods-dir "autorun.cljk"))
+                 (slurp (io/file methods-dir "kotoba.cljk")))]
     (doseq [banned ["urllib" "http.client" "socket" "requests" "subprocess"]]
       (is (not (str/includes? src banned))
           (str "autorun/kotoba does no external I/O (no `" banned "`)")))))
 
-;; ── parity assertion (not in the Python suite; pin byte-/CID-identity vs python3) ──
-(deftest test-cid-matches-python
+;; ── CID pin: the three heartbeat tx CIDs over the committed corpus + method-pack ──
+;; History (docs/adr/0001): this was `test-cid-matches-python`, pinning the CIDs python3
+;; autorun.py produced over data/corpus.seed.json. Those held at b98188c. 8d921b0 (2026-07-18)
+;; replaced the JSON corpus and method-pack with EDN; the datom SET is identical modulo order,
+;; but per-record datom order (keyword-sorted EDN vs JSON insertion order) and the method-note
+;; CID (hash of the method-pack) both changed, and the tx CID covers both. The old -main never
+;; exited non-zero, so the runner printed "ALL suites green" over this failure for 55 days.
+;; Python and the JSON corpus are gone, so parity is unverifiable; what remains checkable is
+;; that the committed inputs still produce these CIDs (re-pinned 2026-09-11 from the tree).
+;; Change a record, a threshold, or the serialisation and this is the test that goes red.
+(deftest test-cid-pin
   (let [log (tmp-log)]
     (try
       (let [res (autorun/run-autonomous 3 autorun/corpus-default autorun/methods-default log)
             cids (mapv #(get % "cid") (get res "beats"))]
-        (is (= ["b64d0d46f2bda8271d848d0cb5973115e2e458e117dca94d1506f90197a71ce09"
-                "b94361cdefdf6e0f4a817c49378ba1ca345f49e61795517fbf98b23ae5585ae2b"
-                "b63be513cea39dd0c1a74f7ac9a17fc4d8443756e335fd57b70f2391090d8cc4f"]
+        (is (= ["b99bf42b2dcfc00c60a2d4f25bb028623bc5e0d76b5f8af7527418e6d06eb833f"
+                "b6f5d354ea6b54c7419f1c6acba05e8fbf276d164194c17a66bad75bec3d395b5"
+                "b5d1395e6de03726f5fdb88b97823e2fe07d97384cc4a24c1598defc840737dec"]
                cids)
-            "tx CIDs reproduce python3 autorun.py byte-for-byte"))
+            "tx CIDs over data/corpus.seed.edn + methods/v1-jp-seed.edn are the pinned three"))
       (finally (.delete log)))))
 
+;; Run when invoked as the bb entry file; exit non-zero on failure (run_tests_clj.sh bypasses
+;; this and owns the exit itself — the old -main returned the summary and exited 0 regardless).
 #?(:clj
    (do
-     (defn -main [& _] (run-tests 'danjo.methods.test-autorun))
+     (defn -main [& _]
+       (let [{:keys [fail error]} (run-tests 'danjo.methods.test-autorun)]
+         (System/exit (if (pos? (+ fail error)) 1 0))))
      (when (= *file* (System/getProperty "babashka.file")) (-main))))

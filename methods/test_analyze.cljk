@@ -12,7 +12,7 @@
             [clojure.string :as str]
             #?(:clj [clojure.java.io :as io])))
 
-#?(:clj (load-file "analyze.cljc"))
+#?(:clj (load-file "analyze.cljk"))
 #?(:clj (alias 'analyze 'danjo.methods.analyze))
 
 (def actor-dir (-> *file* io/file .getParentFile .getParentFile))

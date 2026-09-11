@@ -3,8 +3,8 @@
 (ns root.danjo.methods.test-discrepancy
   (:require [clojure.string :as str]))
 
-(load-file "discrepancy.clj")
-(load-file "ingest.clj")
+(load-file "discrepancy.cljk")
+(load-file "ingest.cljk")
 (alias 'd  'root.danjo.methods.discrepancy)
 (alias 'in 'root.danjo.methods.ingest)
 (alias 'rl 'root.danjo.methods.revenue-ledger)
