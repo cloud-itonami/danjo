@@ -1,5 +1,5 @@
 ;; test_budget_ledger.clj — budget-ledger ingest + byte-identical CID parity with budget_ledger.py.
-;; Run: bb test_budget_ledger.clj   (or: clojure -M test_budget_ledger.clj)   from methods/.
+;; Run: kbb test_budget_ledger.cljk   (or: kbb -M test_budget_ledger.clj)   from methods/.
 (ns root.danjo.methods.test-budget-ledger
   (:require [clojure.string :as str]))
 

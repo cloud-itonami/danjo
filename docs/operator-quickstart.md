@@ -49,7 +49,7 @@ The ten load-file suites print `── <name>: N checks, M failures ──` each
 `clojure.test` suites print `Ran N tests containing M assertions.` If you want one suite:
 
 ```bash
-cd methods && bb -e '(load-file "test_revenue_ledger.cljk")' | tail -1
+cd methods && kbb -e '(load-file "test_revenue_ledger.cljk")' | tail -1
 ```
 
 ```
@@ -66,7 +66,7 @@ scratch log over; `--log` keeps it out of `data/persisted/`.
 
 ```bash
 cd methods
-bb -e '(load-file "kotoba.cljk") (load-file "analyze.cljk") (load-file "autorun.cljk")
+kbb -e '(load-file "kotoba.cljk") (load-file "analyze.cljk") (load-file "autorun.cljk")
        (danjo.methods.autorun/-main "--cycles" "3" "--log" "/tmp/danjo-quickstart.datoms.kotoba.edn" "--fresh")'
 ```
 
@@ -89,7 +89,7 @@ test goes red (provoked 2026-09-11: `48000000` → `48000001` in record 001 → 
 The one observation, as datoms (still in `methods/`):
 
 ```bash
-bb -e '(load-file "kotoba.cljk")
+kbb -e '(load-file "kotoba.cljk")
        (let [tx (first (danjo.methods.kotoba/read-log "/tmp/danjo-quickstart.datoms.kotoba.edn"))]
          (doseq [d (get tx ":tx/datoms") :when (re-find #"danjo-obs" (str (nth d 1)))] (prn d)))'
 ```
@@ -112,10 +112,10 @@ live in; `test_kotoba.cljk` checks every derived attribute name against the forb
 ### Verify the chain, then break it
 
 ```bash
-bb -e '(load-file "kotoba.cljk") (prn (danjo.methods.kotoba/verify-chain "/tmp/danjo-quickstart.datoms.kotoba.edn"))'
+kbb -e '(load-file "kotoba.cljk") (prn (danjo.methods.kotoba/verify-chain "/tmp/danjo-quickstart.datoms.kotoba.edn"))'
 cp /tmp/danjo-quickstart.datoms.kotoba.edn /tmp/danjo-tampered.datoms.kotoba.edn
 perl -pi -e 'if ($. == 3) { s/48000000/48000001/ }' /tmp/danjo-tampered.datoms.kotoba.edn   # line 3 = tx 2
-bb -e '(load-file "kotoba.cljk") (prn (danjo.methods.kotoba/verify-chain "/tmp/danjo-tampered.datoms.kotoba.edn"))'
+kbb -e '(load-file "kotoba.cljk") (prn (danjo.methods.kotoba/verify-chain "/tmp/danjo-tampered.datoms.kotoba.edn"))'
 ```
 
 ```
@@ -138,7 +138,7 @@ cd "$(git rev-parse --show-toplevel)"
 CHAIN='(load-file "methods/kotoba.cljk") (load-file "methods/analyze.cljk") (load-file "methods/autorun.cljk")
        (load-file "methods/diet_beat.cljk") (load-file "methods/procurement_beat.cljk")
        (load-file "methods/ingest_status.cljk") (load-file "methods/mesh.cljk")'
-env -u DANJO_R1_COUNCIL_RATIFY_TX_HASH bb -e "$CHAIN (danjo/-main)" > /tmp/gate-closed.log 2>&1; echo EXIT=$?
+env -u DANJO_R1_COUNCIL_RATIFY_TX_HASH kbb -e "$CHAIN (danjo/-main)" > /tmp/gate-closed.log 2>&1; echo EXIT=$?
 grep -m1 Message /tmp/gate-closed.log
 ```
 
@@ -148,7 +148,7 @@ Message:  danjo R1 not ratified: DANJO_R1_COUNCIL_RATIFY_TX_HASH unset (ADR-2607
 ```
 
 ```bash
-DANJO_R1_COUNCIL_RATIFY_TX_HASH=0xquickstart bb -e "$CHAIN (danjo/-main)"; echo EXIT=$?
+DANJO_R1_COUNCIL_RATIFY_TX_HASH=0xquickstart kbb -e "$CHAIN (danjo/-main)"; echo EXIT=$?
 ```
 
 ```
@@ -178,7 +178,7 @@ yet (`ingest_status.cljk` says so; `test_ingest_status.cljk` pins that it says s
 ## 4. The revenue trace by itself
 
 ```bash
-cd methods && bb -e '(load-file "revenue_ledger.cljk") (root.danjo.methods.revenue-ledger/-main)'
+cd methods && kbb -e '(load-file "revenue_ledger.cljk") (root.danjo.methods.revenue-ledger/-main)'
 ```
 
 ```
@@ -203,9 +203,9 @@ carries the honest coverage numbers).
 
 ```bash
 cd methods
-bb -e '(load-file "coverage.cljk") (root.danjo.methods.coverage/-main)' | tail -2
+kbb -e '(load-file "coverage.cljk") (root.danjo.methods.coverage/-main)' | tail -2
 git -C .. diff --stat -- data/REVENUE-COVERAGE.md          # empty = the committed file is what the code produces
-bb -e '(load-file "registry_coverage.cljk") (root.danjo.methods.registry-coverage/-main "../registry/sources.seed.edn" "/tmp/danjo-registry-COVERAGE.md")' | tail -2
+kbb -e '(load-file "registry_coverage.cljk") (root.danjo.methods.registry-coverage/-main "../registry/sources.seed.edn" "/tmp/danjo-registry-COVERAGE.md")' | tail -2
 ```
 
 ```

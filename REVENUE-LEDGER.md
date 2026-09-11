@@ -82,7 +82,7 @@ It also ingests danjo's **existing JSON budget corpus** directly — `ingest-bud
 into a revenue model. So both the EDN revenue corpus and the JSON budget corpus feed one model.
 
 ```bash
-cd methods && bb -e '(load-file "ingest.clj") \
+cd methods && kbb -e '(load-file "ingest.clj") \
   ((resolve (symbol "root.danjo.methods.ingest" "-main")) "../data/gov-revenue-corpus.jp.edn")'
 ```
 
@@ -133,7 +133,7 @@ Observations persist + bridge through the same pipeline:
 
 ```bash
 # dry-run export of the pending transact bodies (no network):
-cd methods && bb -e '(load-file "kotoba_bridge.clj") \
+cd methods && kbb -e '(load-file "kotoba_bridge.clj") \
   ((resolve (symbol "root.danjo.methods.kotoba-bridge" "-main")) "<local-log-path>")'
 # live push (operator-gated): DANJO_KOTOBA_LIVE=1 DANJO_KOTOBA_OPERATOR_DID=did:web:… …
 ```
@@ -174,7 +174,7 @@ cd methods && bb -e '(load-file "kotoba_bridge.clj") \
 `type:gov-fiscal-mirror` の観測ミラー profile(代理・代表しない)。dep-free `->json`(`parse-json` の逆)。
 
 ```bash
-cd methods && bb -e '(load-file "org_actor.clj") \
+cd methods && kbb -e '(load-file "org_actor.clj") \
   ((resolve (symbol "root.danjo.methods.org-actor" "-main")) "generate")'   # → data/actors/*.json
 ```
 
@@ -187,7 +187,7 @@ this iteration: **FY2023+2024, 2/4 tax-years per-yen traceable** (both 復興 re
 honestly non-traceable), 137 datoms.
 
 ```bash
-cd methods && bb -e '(load-file "coverage.clj") \
+cd methods && kbb -e '(load-file "coverage.clj") \
   ((resolve (symbol "root.danjo.methods.coverage" "-main")))'   # → data/REVENUE-COVERAGE.md
 ```
 
@@ -199,7 +199,7 @@ cd methods && bb -e '(load-file "coverage.clj") \
 ./run_tests_clj.sh                  # or: CLJ_RUNNER=clojure ./run_tests_clj.sh
 
 # demo trace for both taxes
-cd methods && bb -e '(load-file "revenue_ledger.clj") \
+cd methods && kbb -e '(load-file "revenue_ledger.clj") \
   ((resolve (symbol "root.danjo.methods.revenue-ledger" "-main")) "../data/gov-revenue-seed.jp.edn")'
 ```
 

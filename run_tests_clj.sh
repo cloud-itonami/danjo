@@ -21,13 +21,13 @@ if [ "$RUNNER" = "clojure" ]; then
   # .cljc, so load-file on a .cljk that contains #?(...) stops at "Conditional read not
   # allowed" — 8 of 16 suites. Refuse up front rather than print eight misleading failures.
   # Fix-forward is a mirror with the origin extensions from cljk-origin.edn (the shape of the
-  # superproject's scripts/cljk-classpath.cljs); bb reads .cljk as-is.
+  # superproject's scripts/cljk-classpath.cljs); kbb -M:reads .cljk as-is.
   echo "REFUSED: CLJ_RUNNER=clojure cannot load-file .cljk with reader conditionals (JVM allows them for .cljc paths only); run under bb"
   exit 2
 fi
 
-# `bb -e` / `clojure -M -e`: both evaluate a form string in the cwd (methods/).
-if [ "$RUNNER" = "clojure" ]; then EVAL=( clojure -M -e ); else EVAL=( bb -e ); fi
+# `kbb -e` / `kbb -M -e`: both evaluate a form string in the cwd (methods/).
+if [ "$RUNNER" = "clojure" ]; then EVAL=( kbb -M -e ); else EVAL=( kbb -e ); fi
 
 # ── load-file suites: each prints `── <name>: N checks, M failures ──` and exits 1 on failure.
 LOADFILE_SUITES=( test_revenue_ledger.cljk test_ingest.cljk test_discrepancy.cljk test_taxes.cljk

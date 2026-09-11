@@ -1,5 +1,5 @@
 ;; test_discrepancy.clj — appropriation↔outlay reconciliation → non-adjudicating observations.
-;; Run: bb test_discrepancy.clj   (or: clojure -M test_discrepancy.clj)   from methods/.
+;; Run: kbb test_discrepancy.cljk   (or: kbb -M test_discrepancy.clj)   from methods/.
 (ns root.danjo.methods.test-discrepancy
   (:require [clojure.string :as str]))
 

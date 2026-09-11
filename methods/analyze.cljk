@@ -344,7 +344,7 @@
            ;; (script invocation); else fall back to ./20-actors/danjo relative to cwd.
            ;; actor dir = parent-of-parent of this file (methods/) when *file* is a
            ;; resolvable script path; else fall back to ./20-actors/danjo (cwd-relative),
-           ;; so the CLI works under `bb analyze.cljc`, `-m`, and require+invoke alike.
+           ;; so the CLI works under `kbb analyze.cljk`, `-m`, and require+invoke alike.
            here (let [f (when (and *file* (not (str/blank? *file*))) (io/file *file*))
                       pp (some-> f .getAbsoluteFile .getParentFile .getParentFile)]
                   (if (and pp (.isDirectory (io/file pp "data")))

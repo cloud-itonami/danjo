@@ -1,5 +1,5 @@
 ;; test_ingest.clj — standalone suite for the danjo revenue-corpus ingest (G3 passive-only).
-;; Run: bb test_ingest.clj   (or: clojure -M test_ingest.clj)   from methods/.
+;; Run: kbb test_ingest.cljk   (or: kbb -M test_ingest.clj)   from methods/.
 (ns root.danjo.methods.test-ingest
   (:require [clojure.string]))
 

@@ -182,7 +182,7 @@ The seed (all LANDED):
 
 - **did-web registration** — `50-infra/etzhayyim-did-web/public/actor/danjo/{did,profile}.json`
   (`verificationMethod: []` — no server-minted key, did:web trust root = TLS; the
-  `#xrpc-libp2p` peer multiaddr is assigned at `bb murakumo deploy` time when `wasmCid` is set).
+  `#xrpc-libp2p` peer multiaddr is assigned at `kbb -M:murakumo deploy` time when `wasmCid` is set).
 - **social_post membrane** — `cells/social_post/state_machine.cljc`: DRAFTS a record into a
   **dry-run** post ONLY if ≥2 public-source citations (G5) + non-adjudicating mirror with the
   disclaimer (G4) + `server_held_key` false (no-server-key) + status `dry-run`. A `published`
@@ -197,15 +197,15 @@ The seed (all LANDED):
   + `on-kse etzhayyim/actor/danjo/publish`, `:requires #{:cap/kqe :cap/atproto}`).
 
 **Division of labor (zero-knowledge)**: the **planter** authors the in-repo seed (holds no
-key); the **operator** (founder) runs `bb murakumo deploy kotoba.app.edn <node>`
+key); the **operator** (founder) runs `kbb -M:murakumo deploy kotoba.app.edn <node>`
 with `MURAKUMO_OPERATOR_SEED` + Tailscale and exercises the Council gate for the first live post;
 the **actor's mesh runtime** self-generates/self-custodies its `did:key`, presents a member CACAO
 leash (ADR-2606111400), and signs its own posts. The server never signs. R0 = dry-run drafts
 only; live broadcast is Council Lv6+ + operator + member/actor-signature gated (§1.12 / G11).
 
 ```bash
-bb -e '(load-file "methods/social.cljc")'                 # projection loads green
-bb -e '(load-file "cells/social_post/state_machine.cljc")' # membrane loads green
+kbb -e '(load-file "methods/social.cljc")'                 # projection loads green
+kbb -e '(load-file "cells/social_post/state_machine.cljc")' # membrane loads green
 # operator step (zero-knowledge — needs MURAKUMO_OPERATOR_SEED + Tailscale):
 #   bb murakumo deploy kotoba.app.edn asher
 ```
