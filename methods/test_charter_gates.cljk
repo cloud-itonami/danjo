@@ -9,8 +9,16 @@
 
 (def ^:private here (.getParentFile (java.io.File. ^String *file*)))      ;; methods/
 (def ^:private actor-dir (.getParentFile here))                          ;; danjo/
-(def ^:private actor-name (.getName actor-dir))
-(def ^:private root (.. actor-dir getParentFile getParentFile))          ;; 20-actors → ROOT
+(def ^:private actor-name "danjo")   ;; the lexicon namespace segment; not the checkout dir name
+                                       ;; (a worktree is not called danjo — measured 2026-09-11)
+(def ^:private root
+  ;; The lexicons live in the etzhayyim monorepo (00-contracts/...). In the original 20-actors/
+  ;; layout that was two levels up; in the west layout it is a sibling checkout, so the runner
+  ;; passes DANJO_CONTRACTS_ROOT. Unset + not two levels up = this suite cannot run (it is
+  ;; SKIPPED by run_tests_clj.sh with that reason, never counted green).
+  (if-let [env (System/getenv "DANJO_CONTRACTS_ROOT")]
+    (java.io.File. ^String env)
+    (.. actor-dir getParentFile getParentFile)))                          ;; 20-actors → ROOT
 (def ^:private lexdir (java.io.File. root (str "00-contracts/lexicons/com/etzhayyim/" actor-name)))
 (defn- stringify-keys [v]
   (cond

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# danjo — bb/clj test suite (ADR-2606160842 py→clj port wave; Python pruned).
-set -euo pipefail
-cd "$(dirname "$0")/../.."
-exec bb -e '(require (quote clojure.test) (quote danjo.methods.test-analyze) (quote danjo.methods.test-charter-gates) (quote danjo.methods.test-autorun) )(let [r (clojure.test/run-tests (quote danjo.methods.test-analyze) (quote danjo.methods.test-charter-gates) (quote danjo.methods.test-autorun) )](System/exit (if (zero? (+ (:fail r) (:error r))) 0 1)))'
+# danjo — test entry. The former body `cd ../..` + `bb -e (require danjo.methods.test-…)` assumed
+# the monorepo root on the classpath; that root does not exist here and no runtime resolves
+# `danjo.methods.*` from methods/*.cljk anyway. run_tests_clj.sh is the runner (docs/adr/0001).
+exec "$(dirname "$0")/run_tests_clj.sh" "$@"

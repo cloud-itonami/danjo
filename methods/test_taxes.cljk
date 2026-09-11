@@ -3,7 +3,7 @@
 (ns root.danjo.methods.test-taxes
   (:require [clojure.string :as str]))
 
-(load-file "taxes.clj")
+(load-file "taxes.cljk")
 (alias 't 'root.danjo.methods.taxes)
 
 (def checks (atom 0)) (def fails (atom 0))

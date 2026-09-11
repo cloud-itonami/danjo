@@ -22,7 +22,7 @@
 | 3 | Lexicon skeletons (`com.etzhayyim.danjo.*`) | ✅ | init |
 | 4 | worldwide fiscal-source registry seed (`registry/sources.seed.edn`, 全件 unverified-seed) | ✅ | seed |
 | 5 | fail-closed registry invariants test + G14 VERIFICATION.md | ✅ | この iter |
-| 6 | `run_tests_clj.sh` の3 suite (`test_budget_ledger.clj`/`test_kotoba.clj`/`test_autorun.clj`) が dormant (実行不能) | ✅ 3/3解消 (`test_budget_ledger.clj`+`test_kotoba.clj`+`test_autorun.cljc` すべて green、`run_tests_clj.sh` 全11 suite green) | 2026-07-10 |
+| 6 | `run_tests_clj.sh` の suite が dormant (実行不能) | ✅ 16 suite green (2026-09-11。2026-07-10 に 11 suite、07-18 に 14 と書いたが `test_autorun` の 1 件は 07-18〜09-11 の間 runner に隠れて赤だった → `docs/adr/0001`) | 2026-09-11 |
 | 7 | R1 ingest trio Founder 1/1 ratification (ADR-2607180900; trigger #2 bootstrap 緩和) | ✅ | 2026-07-18 |
 | 8 | diet_statement_index beat live (`methods/diet_beat.cljk`, jp_kokkai fixture → EAVT) | ✅ | 2026-07-18 |
 | 9 | revenue beat 統合 (`methods/mesh.cljk` orchestrator, per-yen trace 実稼働) | ✅ | 2026-07-18 |
@@ -33,6 +33,33 @@
 | 13 | R3 oversight_report + named-party publication (G10, 1 SBT=1 vote) | ⏳ blocked: Council Lv7+ unanimity | — |
 
 ## イテレーション記録
+
+### 2026-09-11 — テストが再び走る（.cljk 改名の後始末）+ runner が隠していた 1 件 + operator quickstart
+`77c6fd9` の `.cljk` 改名で `methods/` 内の `load-file` 22 箇所と runner の suite 名 14 個が
+存在しないファイルを指し、pin `2443b33` では **14/14 suite が `File does not exist`** だった。
+`run_tests_clj.sh` を load-file 連鎖（依存順を明記）に書き直し、exit code を runner 側で持ち、
+0 件しか走らなかった suite は `REFUSED`（exit 2）にした。
+
+その結果、**上の 2026-07-18 の「全 14 suite 実実行 green」は 13 に真で 1 に偽だった**ことが
+出た: `test_autorun` の `-main` が `System/exit` を呼ばず、`test-cid-matches-python`
+（python3 の CID パリティ pin）が `8d921b0` の JSON→EDN 移行以来 55 日間、runner の
+`ALL suites green` の下で落ち続けていた（datom 集合は同一、レコード内の順序と
+method-note CID が変わり tx CID が動いた）。Python も JSON corpus も無いので、
+現 EDN 入力に対する `test-cid-pin` に置き換えた。経緯と判断は `docs/adr/0001`。
+
+- 16 suite green（`test_analyze` と `test_charter_gates` を runner に追加。後者は
+  etzhayyim/root の lexicon を読むので、無ければ `SKIPPED` と印字して 15 で数える）。
+- `CLJ_RUNNER=clojure` は **拒否**（JVM は `.cljc` パス以外で reader conditional を許さない。
+  8/16 suite が `Conditional read not allowed`。mirror 未構築 = 未解消の gap として明記）。
+- 歩いて見つけた欠陥 2 件: `revenue_ledger` が cwd 相対でログを **repo の外**
+  （`../data/persisted/`）に書いていた → `*file*` 相対に。`registry_coverage -main` の
+  既定入力が消えた `.json` を指していた。
+- `docs/operator-quickstart.md`: 全コマンドを着地 tree で実行し、出力をそのまま引用。
+  gate の閉（env 未設定 → exit 1）と開、chain の検証と改竄検出（`broken_at 1`）、
+  coverage 再生成が committed と一致することまで含む。
+
+**非 goals**: JVM 用 mirror / datom の正準順序（CID が全部動くので log の identity の判断）/
+R2・R3（Council gate は変わらず）。
 
 ### 2026-07-18 (2) — jp_chotatsu (政府調達) W3 fetcher + procurement_beat（procurement axis 実データ経路）
 **procurement axis を `:awaiting-w3-fetcher` stub から実データ経路へ。** 外部ソース確認:
@@ -50,7 +77,8 @@
 - **mesh.clj** observe に procurement_beat 統合（procurement-graph head を summary に追加）。
 - **テスト品質修正（silent false-green 解消）**: `test_diet_beat`/`test_ingest_status`/`test_procurement_beat`
   に `run-tests` + exit-on-fail を追加（それまで deftest が未実行＝false-green だった）。diet_beat の
-  非裁定フラグを正準 `:danjo.obs/non-adjudicating` に統一。全 14 suite 実実行 green。
+  非裁定フラグを正準 `:danjo.obs/non-adjudicating` に統一。全 14 suite 実実行 green — と当時書いたが、
+  `test_autorun` は exit-on-fail を足し忘れており 1 件が赤のまま隠れていた（2026-09-11 に判明、`docs/adr/0001`）。
 
 **非 goals（変更なし）**: network URL の live 確定は operator（local-source 即利用可）/ awardeeLei は
 gleif 別件 / gov_procurement_sensor は W2/W3 / named-party 観測は R2 Council-gated。

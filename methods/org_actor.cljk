@@ -13,7 +13,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(load-file "taxes.clj")
+(load-file "taxes.cljk")
 (alias 't  'root.danjo.methods.taxes)
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 

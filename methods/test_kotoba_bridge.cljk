@@ -5,8 +5,8 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
-(load-file "kotoba_bridge.clj")
-(load-file "ingest.clj")
+(load-file "kotoba_bridge.cljk")
+(load-file "ingest.cljk")
 (alias 'kb 'root.danjo.methods.kotoba-bridge)
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 (alias 'in 'root.danjo.methods.ingest)

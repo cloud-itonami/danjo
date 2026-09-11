@@ -3,7 +3,7 @@
 (ns root.danjo.methods.test-budget-ledger
   (:require [clojure.string :as str]))
 
-(load-file "budget_ledger.cljc")
+(load-file "budget_ledger.cljk")
 (alias 'bl 'danjo.methods.budget-ledger)
 
 (def checks (atom 0)) (def fails (atom 0))

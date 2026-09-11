@@ -5,7 +5,7 @@
             [clojure.edn]
             [clojure.java.io :as io]))
 
-(load-file "org_actor.clj")
+(load-file "org_actor.cljk")
 (alias 'o  'root.danjo.methods.org-actor)
 (alias 't  'root.danjo.methods.taxes)
 (alias 'rl 'root.danjo.methods.revenue-ledger)
@@ -57,7 +57,7 @@
     (check "都道府県(集約) collects 地方消費税"    (some #{:local-consumption} (map :id (:taxes (:collects pref))))))
 
   ;; ── resolvable profile artifacts (entity-as-actor, keyless) ──
-  (load-file "ingest.clj")
+  (load-file "ingest.cljk")
   (let [in (find-ns 'root.danjo.methods.ingest)
         prof (o/org-profile (->> (:orgs orgs) (filter #(= :nta (:id %))) first) orgs taxes)]
     (check "org-profile is keyless"            (true? (:keyless prof)))

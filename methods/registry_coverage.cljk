@@ -58,7 +58,7 @@
      "never judges (G4); a catalogued source unlocks nothing until it clears G14 verification._\n")))
 
 (defn -main [& args]
-  (let [in  (or (first args) "../registry/sources.seed.json")
+  (let [in  (or (first args) "../registry/sources.seed.edn")
         out (io/file (or (second args) "../registry/COVERAGE.md"))
         rep (report (load-registry in))]
     (io/make-parents out)

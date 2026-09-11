@@ -18,7 +18,7 @@
   (:require [clojure.string :as str])
   (:import [java.security MessageDigest]))
 
-(load-file "revenue_ledger.clj")
+(load-file "revenue_ledger.cljk")
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 
 (defn- sha256-hex [^String s]
@@ -106,7 +106,7 @@
     (vec out)))
 
 (defn -main [& args]
-  (let [model (do (load-file "ingest.clj")
+  (let [model (do (load-file "ingest.cljk")
                   (let [in (find-ns 'root.danjo.methods.ingest)]
                     (-> ((ns-resolve in 'ingest) "../data/gov-revenue-corpus.jp.edn")
                         ((ns-resolve in 'with-budget) ((ns-resolve in 'ingest-budget) "../data/gov-fiscal-seed.jp.edn")))))]

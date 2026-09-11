@@ -4,8 +4,8 @@
   (:require [clojure.string :as str])
   (:import [java.io File]))
 
-(load-file "analyze.cljc")   ; canonical danjo analyze (ns danjo.methods.analyze); .clj dup removed
-(load-file "kotoba.cljc")
+(load-file "analyze.cljk")   ; canonical danjo analyze (ns danjo.methods.analyze); .clj dup removed
+(load-file "kotoba.cljk")
 (alias 'an 'danjo.methods.analyze)
 (alias 'ko 'danjo.methods.kotoba)
 

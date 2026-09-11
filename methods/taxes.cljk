@@ -14,7 +14,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(load-file "revenue_ledger.clj")
+(load-file "revenue_ledger.cljk")
 (alias 'rl 'root.danjo.methods.revenue-ledger)
 
 (def traceability-class
