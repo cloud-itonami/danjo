@@ -16,6 +16,15 @@ cd "$(dirname "$0")/methods"
 
 RUNNER="${CLJ_RUNNER:-bb}"   # CLJ_RUNNER=clojure ./run_tests_clj.sh  to use the JVM
 command -v "$RUNNER" >/dev/null 2>&1 || { echo "runner '$RUNNER' not found"; exit 127; }
+if [ "$RUNNER" = "clojure" ]; then
+  # Measured 2026-09-11: JVM Clojure enables reader conditionals only for paths ending in
+  # .cljc, so load-file on a .cljk that contains #?(...) stops at "Conditional read not
+  # allowed" — 8 of 16 suites. Refuse up front rather than print eight misleading failures.
+  # Fix-forward is a mirror with the origin extensions from cljk-origin.edn (the shape of the
+  # superproject's scripts/cljk-classpath.cljs); bb reads .cljk as-is.
+  echo "REFUSED: CLJ_RUNNER=clojure cannot load-file .cljk with reader conditionals (JVM allows them for .cljc paths only); run under bb"
+  exit 2
+fi
 
 # `bb -e` / `clojure -M -e`: both evaluate a form string in the cwd (methods/).
 if [ "$RUNNER" = "clojure" ]; then EVAL=( clojure -M -e ); else EVAL=( bb -e ); fi
