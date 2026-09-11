@@ -1,5 +1,5 @@
 ;; test_kotoba.clj — danjo local Datom-log writer: byte-identical tx_cid parity with kotoba.py
-;; + commit-DAG round-trip + tamper-detection. Run: bb test_kotoba.clj   (from methods/).
+;; + commit-DAG round-trip + tamper-detection. Run: kbb test_kotoba.cljk   (from methods/).
 (ns root.danjo.methods.test-kotoba
   (:require [clojure.string :as str])
   (:import [java.io File]))

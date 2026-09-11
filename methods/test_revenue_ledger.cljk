@@ -1,5 +1,5 @@
 ;; test_revenue_ledger.clj — standalone test suite for the danjo revenue ledger.
-;; Run: clojure -M test_revenue_ledger.clj   (from methods/)  — or  bb test_revenue_ledger.clj
+;; Run: kbb -M test_revenue_ledger.clj   (from methods/)  — or  kbb test_revenue_ledger.cljk
 ;; Prints its own count and exits non-zero on failure (the danjo run_tests.sh contract).
 (ns root.danjo.methods.test-revenue-ledger
   (:require [clojure.string :as str]))

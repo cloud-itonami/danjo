@@ -1,5 +1,5 @@
 ;; test_taxes.clj — national-tax registry + honest 3-way earmark classification.
-;; Run: bb test_taxes.clj   (or: clojure -M test_taxes.clj)   from methods/.
+;; Run: kbb test_taxes.cljk   (or: kbb -M test_taxes.clj)   from methods/.
 (ns root.danjo.methods.test-taxes
   (:require [clojure.string :as str]))
 

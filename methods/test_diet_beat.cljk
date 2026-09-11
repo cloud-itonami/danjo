@@ -3,7 +3,7 @@
   20-actors/ on the classpath for danjo.methods.*, like test_autorun). ADR-2607180900.
   The pure projection (project-datoms) is unit-tested here; the beat I/O path + the
   DANJO_R1_COUNCIL_RATIFY_TX_HASH gate are exercised end-to-end by methods/mesh.cljk
-  observe (run: bb -cp 20-actors -e '... (load-file mesh.clj) (-main)')."
+  observe (run: kbb -cp 20-actors -e '... (load-file mesh.clj) (-main)')."
   (:require [clojure.test :refer [deftest is testing run-tests]]
             [danjo.methods.diet-beat :as diet]
             [danjo.methods.kotoba :as kotoba]

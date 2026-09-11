@@ -114,7 +114,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
 - `test_autorun.cljc` は sibling test群(load-file方式)と違い
   `(:require [danjo.methods.autorun :as autorun] [danjo.methods.kotoba :as kotoba])` という
   namespace-qualified require を使う(このファイルだけ `clojure.test`/`deftest`/`is` の正規フレームワークを
-  使っており、その方が自然な形)。`methods/` から `bb test_autorun.cljc` すると
+  使っており、その方が自然な形)。`methods/` から `kbb test_autorun.cljk` すると
   `danjo/methods/autorun.cljk` を classpath 上で解決できず即失敗していた——ns `danjo.methods.autorun`
   が指す実ファイルパスは `20-actors/danjo/methods/autorun.cljk` なので、classpath root は
   `20-actors/`(= `methods/` から2階層上、`../..`)である必要があった。
@@ -126,7 +126,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
   既存挙動、bb がこの suite の default/実質唯一の実行経路であることに変わりはない — 未修正のまま残す)。
 - suite 名も `run_tests_clj.sh` 側で `test_autorun.clj`(存在しない)→ `test_autorun.cljc`(実体)に修正。
 
-**結果**: `bb -cp ../.. test_autorun.cljc` → **7 tests, 27 assertions, 0 failures, 0 errors**。
+**結果**: `kbb -cp ../.. test_autorun.cljc` → **7 tests, 27 assertions, 0 failures, 0 errors**。
 `./run_tests_clj.sh` フル実行で **全11 suite green**(#3022 の `test_kotoba.clj` 修正とあわせ、#6 の
 3 suiteすべて解消)。
 
@@ -147,7 +147,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
 - 全 keyword アクセスを文字列リテラル比較 / `(get ... "field")` に書き換えるだけで解決。
   `kotoba.cljc` 側は**無修正**。
 
-**結果**: `bb test_kotoba.clj` 16/16 green。`test_autorun.clj` の解消は別PR(上記エントリ参照)で対応。
+**結果**: `kbb test_kotoba.cljk` 16/16 green。`test_autorun.clj` の解消は別PR(上記エントリ参照)で対応。
 
 ### 2026-07-10 (loop, 前回) — `test_budget_ledger.clj` 復旧 + `budget_ledger.cljc` の実バグ修正
 前 iteration の診断(#6 の1件目)を実際に修正。**単純なロードパス修正だけでは済まなかった** — 2つの
@@ -170,7 +170,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
    することを確認済み — canonical-json-utf8 のハッシュロジック自体は無傷、ドリフトはテストのアクセス
    パターンと fiscalYear 型ハンドリングの2点のみ。
 
-**結果**: `bb test_budget_ledger.clj` 14/14 green。`./run_tests_clj.sh` 全体では
+**結果**: `kbb test_budget_ledger.cljk` 14/14 green。`./run_tests_clj.sh` 全体では
 `test_kotoba.clj`/`test_autorun.clj` は前回診断のまま **未解決**(honest — 別の独立した根本原因、
 今回の1項目原則の範囲外)。
 
@@ -231,4 +231,4 @@ adjudicates。
 ### 2026-06-17 (loop) — manifest+lexicon charter-gate test (構造ゲート pin)
 新設 `methods/test_charter_gates.cljk`(**7 tests green**)で manifest G1–G13 + 4 lexicon の非裁定ゲートを固定: G4 discrepancyObservation/oversightReport const nonAdjudicatingNotice=true + 全lexicon に verdict/accusation/guilt/ruling フィールド不在(censor's eye, never sword)/ G5 observation が sourceRecordCids + methodNoteCid、crossReferenceLink が basisRecordCids(≥2 source)/ G6 methodNote が definition+inputs+version / G11 publiclyNamedBasis={procurement-awardee, diet-member-on-record, budget-recipient, contracting-authority} / governance oversightReport が councilAttestations + councilReviewCid + oneSbtOneVoteChainCid。`run_tests.sh` 新設。working-tree edits only。
 
-> **2026-06-17 substrate-native migration (ADR-2606160842):** the charter-gate test above was ported Python→Clojure (`methods/test_charter_gates.py` → `methods/test_charter_gates.cljk`, ns `danjo.methods.test-charter-gates`, reads the lexicons via cheshire/edn) and the Python was pruned. Run via `./run_tests.sh` (now `exec bb`) or `bb run test:charter` (all 34 charter suites; 244 tests / 924 assertions green). Assertions unchanged (1:1 port).
+> **2026-06-17 substrate-native migration (ADR-2606160842):** the charter-gate test above was ported Python→Clojure (`methods/test_charter_gates.py` → `methods/test_charter_gates.cljk`, ns `danjo.methods.test-charter-gates`, reads the lexicons via cheshire/edn) and the Python was pruned. Run via `./run_tests.sh` (now `exec bb`) or `kbb -M:test:charter` (all 34 charter suites; 244 tests / 924 assertions green). Assertions unchanged (1:1 port).

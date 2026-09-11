@@ -1,5 +1,5 @@
 ;; test_coverage.clj — honest coverage report + scorecard.
-;; Run: bb test_coverage.clj   (or: clojure -M test_coverage.clj)   from methods/.
+;; Run: kbb test_coverage.cljk   (or: kbb -M test_coverage.clj)   from methods/.
 (ns root.danjo.methods.test-coverage
   (:require [clojure.string :as str]))
 
