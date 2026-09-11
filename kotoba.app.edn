@@ -1,8 +1,8 @@
 ;; kotoba.app.edn — actor:danjo KOTOBA Mesh application manifest (observatory on-kse, ADR-2606230001 §4).
-;; Deploy: kotoba app deploy kotoba.app.edn  (compiles methods/mesh.clj → CID → control datoms)
+;; Deploy: kotoba app deploy kotoba.app.edn  (compiles methods/mesh.cljk → CID → control datoms)
 ;;
 ;; R1 (ADR-2607180900, founder 1/1 bootstrap): the `danjo` component is now the LIVE R1
-;; ingest orchestrator — methods/mesh.clj runs the procurement + revenue + diet beats and
+;; ingest orchestrator — methods/mesh.cljk runs the procurement + revenue + diet beats and
 ;; publishes their heads + the per-yen trace summary. The hourly :tick trigger is the R1
 ;; periodic heartbeat (the :kse trigger stays for on-demand observe). Live AT-Proto
 ;; broadcast is still G7-gated (operator transport credential); this emits datoms + mesh
@@ -12,7 +12,7 @@
  :kotoba.app/version "0.2.0"
  :kotoba.app/components
  [{:name     "danjo"
-   :src      "methods/mesh.clj"                  ; R1 orchestrator → run + on-kse + tick
+   :src      "methods/mesh.cljk"                  ; R1 orchestrator → run + on-kse + tick
    :scale    1
    :triggers [{:type :tick :cron "17 * * * *"}                   ; R1 hourly heartbeat (ADR-2607180900)
               {:type :kse  :topic "etzhayyim/actor/danjo"}]

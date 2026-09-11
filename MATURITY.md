@@ -24,8 +24,8 @@
 | 5 | fail-closed registry invariants test + G14 VERIFICATION.md | ✅ | この iter |
 | 6 | `run_tests_clj.sh` の3 suite (`test_budget_ledger.clj`/`test_kotoba.clj`/`test_autorun.clj`) が dormant (実行不能) | ✅ 3/3解消 (`test_budget_ledger.clj`+`test_kotoba.clj`+`test_autorun.cljc` すべて green、`run_tests_clj.sh` 全11 suite green) | 2026-07-10 |
 | 7 | R1 ingest trio Founder 1/1 ratification (ADR-2607180900; trigger #2 bootstrap 緩和) | ✅ | 2026-07-18 |
-| 8 | diet_statement_index beat live (`methods/diet_beat.cljc`, jp_kokkai fixture → EAVT) | ✅ | 2026-07-18 |
-| 9 | revenue beat 統合 (`methods/mesh.clj` orchestrator, per-yen trace 実稼働) | ✅ | 2026-07-18 |
+| 8 | diet_statement_index beat live (`methods/diet_beat.cljk`, jp_kokkai fixture → EAVT) | ✅ | 2026-07-18 |
+| 9 | revenue beat 統合 (`methods/mesh.cljk` orchestrator, per-yen trace 実稼働) | ✅ | 2026-07-18 |
 | 10 | procurement axis: jp_chotatsu fetcher landed + procurement_beat (representative fixture → EAVT) | ✅ fetcher+beat | 2026-07-18 |
 | 10b | budget axis: jp_yosan fetcher 未構築（W3）→ budget_ledger は引き続き :awaiting-w3-fetcher | ⏳ W3 | — |
 | 11 | `no-danjo-adjudication.mjs` lefthook 配線 (R1 trigger #5) | ✅ | 2026-07-18 |
@@ -43,7 +43,7 @@
 - **jp_chotatsu fetcher** (`70-tools/e7m-dataset/.../fetchers/jp_chotatsu.py`): jp_kokkai テンプレで
   network mode（bulk URL、operator が `rakusatsuopendata.pdf` で最終確認）+ local-source mode（主・テスト対象）。
   p-portal 落札実績 → procurementRecord 準拠 NDJSON。Tier A（acceptance gate 不要）。3 test green。
-- **procurement_beat** (`methods/procurement_beat.cljc`): jp_chotatsu NDJSON → kotoba EAVT
+- **procurement_beat** (`methods/procurement_beat.cljk`): jp_chotatsu NDJSON → kotoba EAVT
   (contracting-authority ↔ procurement-award ↔ corp-entity ↔ cross-reference-link)。G4 非裁定 + G5 ≥2 source。
   representative fixture（`data/gov-procurement-fixture.jp.edn`、single-bidder seed 含む）。
 - **ingest_status** procurement-status を `:fetcher-landed-awaiting-operator-pull` に更新。
@@ -62,14 +62,14 @@ gleif 別件 / gov_procurement_sensor は W2/W3 / named-party 観測は R2 Counc
 Seat 2-5 は未充填だが、R1 は datom-only（named-party 観測=R2・公開=R3 は含まず）で
 actuation リスクゼロのため技術的根拠のある承認。
 
-- **diet beat** (`methods/diet_beat.cljc`): jp_kokkai_kaigiroku fixture → kotoba EAVT
+- **diet beat** (`methods/diet_beat.cljk`): jp_kokkai_kaigiroku fixture → kotoba EAVT
   (gov-official / diet-statement / cross-reference-link)。G4 non-adjudicating + G5 ≥2 source
   CIDs 構造的強制。`DANJO_R1_COUNCIL_RATIFY_TX_HASH` env gate。
-- **revenue beat 統合** (`methods/mesh.clj` orchestrator): 既存の `revenue_ledger.clj`
+- **revenue beat 統合** (`methods/mesh.cljk` orchestrator): 既存の `revenue_ledger.clj`
   (`run-cycle!` + per-yen `trace`) + `autorun.cljc` (procurement) + diet + ingest-status を
   1 observe に統合。実データで「源泉所得税=一般会計で per-yen 非追跡 (fungible) /
   復興特別所得税=復興特別会計で per-yen 追跡可 (residual 0)」を正直に出力。
-- **procurement/budget** (`methods/ingest_status.cljc`): `:awaiting-w3-fetcher` stub。
+- **procurement/budget** (`methods/ingest_status.cljk`): `:awaiting-w3-fetcher` stub。
   jp_chotatsu / jp_yosan fetcher は W3。データを出さない (G8)。
 - **lint** (`lefthook.yml`): `no-danjo-adjudication` を pre-commit に配線 (R1 trigger #5)。
 - **kotoba.app.edn**: `danjo` component に毎時 `:tick` trigger 追加 (R1 定期 heartbeat)。
@@ -87,8 +87,8 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
   `(:require [danjo.methods.autorun :as autorun] [danjo.methods.kotoba :as kotoba])` という
   namespace-qualified require を使う(このファイルだけ `clojure.test`/`deftest`/`is` の正規フレームワークを
   使っており、その方が自然な形)。`methods/` から `bb test_autorun.cljc` すると
-  `danjo/methods/autorun.cljc` を classpath 上で解決できず即失敗していた——ns `danjo.methods.autorun`
-  が指す実ファイルパスは `20-actors/danjo/methods/autorun.cljc` なので、classpath root は
+  `danjo/methods/autorun.cljk` を classpath 上で解決できず即失敗していた——ns `danjo.methods.autorun`
+  が指す実ファイルパスは `20-actors/danjo/methods/autorun.cljk` なので、classpath root は
   `20-actors/`(= `methods/` から2階層上、`../..`)である必要があった。
 - `run_tests_clj.sh` を修正: `test_autorun.cljc` の実行時だけ bb に `-cp ../..` を渡す(他 suite は
   load-file方式のため無変更・無影響)。JVM(`CLJ_RUNNER=clojure`)側は `-Sdeps '{:paths ["." "../.."]}'`
@@ -164,7 +164,7 @@ budget_ledger/kotobaで見つかったようなAPIドリフトやランタイム
 3. **`test_autorun.clj`**: 実体は存在せず `test_autorun.cljc` のみ。こちらは単純な rename では済まず、
    `(:require [danjo.methods.autorun :as autorun] [danjo.methods.kotoba :as kotoba])` という
    namespace-qualified require を使っており(他の sibling test は load-file 方式)、bb 実行時に
-   classpath 上で `danjo/methods/autorun.cljc` を解決できず失敗する — `bb.edn`/`deps.edn` の
+   classpath 上で `danjo/methods/autorun.cljk` を解決できず失敗する — `bb.edn`/`deps.edn` の
    `:paths` 整備か、他ファイルと同じ load-file 方式への変更が必要(未実施)。
 
 **honest (G8)**: この3 suiteは now も dormant のまま — 今回のiterationでは "1項目" の範囲を
@@ -201,6 +201,6 @@ maintainer DID 登録後)。danjo finds + cross-references; kanae renders; neith
 adjudicates。
 
 ### 2026-06-17 (loop) — manifest+lexicon charter-gate test (構造ゲート pin)
-新設 `methods/test_charter_gates.cljc`(**7 tests green**)で manifest G1–G13 + 4 lexicon の非裁定ゲートを固定: G4 discrepancyObservation/oversightReport const nonAdjudicatingNotice=true + 全lexicon に verdict/accusation/guilt/ruling フィールド不在(censor's eye, never sword)/ G5 observation が sourceRecordCids + methodNoteCid、crossReferenceLink が basisRecordCids(≥2 source)/ G6 methodNote が definition+inputs+version / G11 publiclyNamedBasis={procurement-awardee, diet-member-on-record, budget-recipient, contracting-authority} / governance oversightReport が councilAttestations + councilReviewCid + oneSbtOneVoteChainCid。`run_tests.sh` 新設。working-tree edits only。
+新設 `methods/test_charter_gates.cljk`(**7 tests green**)で manifest G1–G13 + 4 lexicon の非裁定ゲートを固定: G4 discrepancyObservation/oversightReport const nonAdjudicatingNotice=true + 全lexicon に verdict/accusation/guilt/ruling フィールド不在(censor's eye, never sword)/ G5 observation が sourceRecordCids + methodNoteCid、crossReferenceLink が basisRecordCids(≥2 source)/ G6 methodNote が definition+inputs+version / G11 publiclyNamedBasis={procurement-awardee, diet-member-on-record, budget-recipient, contracting-authority} / governance oversightReport が councilAttestations + councilReviewCid + oneSbtOneVoteChainCid。`run_tests.sh` 新設。working-tree edits only。
 
-> **2026-06-17 substrate-native migration (ADR-2606160842):** the charter-gate test above was ported Python→Clojure (`methods/test_charter_gates.py` → `methods/test_charter_gates.cljc`, ns `danjo.methods.test-charter-gates`, reads the lexicons via cheshire/edn) and the Python was pruned. Run via `./run_tests.sh` (now `exec bb`) or `bb run test:charter` (all 34 charter suites; 244 tests / 924 assertions green). Assertions unchanged (1:1 port).
+> **2026-06-17 substrate-native migration (ADR-2606160842):** the charter-gate test above was ported Python→Clojure (`methods/test_charter_gates.py` → `methods/test_charter_gates.cljk`, ns `danjo.methods.test-charter-gates`, reads the lexicons via cheshire/edn) and the Python was pruned. Run via `./run_tests.sh` (now `exec bb`) or `bb run test:charter` (all 34 charter suites; 244 tests / 924 assertions green). Assertions unchanged (1:1 port).

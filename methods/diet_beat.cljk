@@ -17,7 +17,7 @@
 
   Distinct from autorun.cljc (procurement/observation) and revenue_ledger.clj (revenue):
   this is the DIET axis of the R1 ingest trio. procurement/budget stay W3-stubbed
-  (methods/ingest_status.cljc) until jp_chotatsu / jp_yosan fetchers land.
+  (methods/ingest_status.cljk) until jp_chotatsu / jp_yosan fetchers land.
 
   Pure projection + file I/O behind #?(:clj …); runs under bb and clojure. Deterministic
   (caller supplies tx-id + as-of). Env-var gate DANJO_R1_COUNCIL_RATIFY_TX_HASH at the beat

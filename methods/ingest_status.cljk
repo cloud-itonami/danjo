@@ -21,7 +21,7 @@
   {:cell "DanjoProcurementGraph" :appended false :datoms 0
    :reason :fetcher-landed-awaiting-operator-pull
    :fetcher "70-tools/e7m-dataset/src/e7m_dataset/fetchers/jp_chotatsu.py"
-   :beat "20-actors/danjo/methods/procurement_beat.cljc"
+   :beat "20-actors/danjo/methods/procurement_beat.cljk"
    :next-step "operator: run jp_chotatsu (local-source or network) → IPFS pin → procurement_beat consumes live corpus"
    :fixture "data/gov-procurement-fixture.jp.edn (representative — not live-pinned)"
    :gates {:G3 :passive-only :G8 :no-fabrication}
