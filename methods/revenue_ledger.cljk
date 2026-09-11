@@ -31,21 +31,26 @@
   ["verdict" "guilt" "wrongdoing" "culprit" "illegal" "crime" "violation"
    "unlawful" "fraud" "sanction" "犯罪" "違法" "有罪" "不正"])
 
+;; Paths resolve from THIS FILE, as diet_beat / procurement_beat already do — not from the cwd.
+;; Measured 2026-09-11: the cwd-relative defaults had no cwd that satisfied both — from methods/
+;; the seed fallback did not exist, from the repo root the log landed OUTSIDE the repo at
+;; ../data/persisted/ (the mesh observe must run from the root for load-seed to resolve).
+(def ^:private here (some-> *file* io/file .getAbsoluteFile .getParentFile))   ; methods/
+(def ^:private data-dir (some-> here .getParentFile (io/file "data")))         ; <repo>/data
+
 (def seed-default
-  (str (System/getProperty "user.dir") "/../data/gov-revenue-seed.jp.edn"))
+  (str (io/file data-dir "gov-revenue-seed.jp.edn")))
 
 (def log-default
   "Append-only local kotoba Datom log for the revenue ledger."
-  "../data/persisted/danjo.revenue.datoms.kotoba.edn")
+  (str (io/file data-dir "persisted" "danjo.revenue.datoms.kotoba.edn")))
 
 ;; ── load ──────────────────────────────────────────────────────────────────────
 (defn load-seed
   "Read the representative JP revenue seed (EDN). Path defaults to the actor data dir."
   ([] (load-seed nil))
   ([path]
-   (let [f (io/file (or path "20-actors/danjo/data/gov-revenue-seed.jp.edn"))
-         f (if (.exists f) f (io/file "data/gov-revenue-seed.jp.edn"))]
-     (edn/read-string (slurp f)))))
+   (edn/read-string (slurp (io/file (or path seed-default))))))
 
 ;; ── pure index over the seed (the in-memory "db") ───────────────────────────────
 (defn index
