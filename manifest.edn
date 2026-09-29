@@ -175,7 +175,7 @@
    :murakumoFleet "No deployment",
    :phase "R0",
    :scope
-   "Scaffold only. 6 cells path-reserved. 4 Lexicon skeletons. manifest + README + CLAUDE.md."}
+   "Scaffold only. 6 cells path-reserved. 4 Lexicon skeletons. manifest + README + AGENTS.md."}
   {:date "post-Bootstrap-Council + ≥1 Council Lv6+ ratify",
    :gate "Council Lv6+ ≥3 per cell",
    :murakumoFleet "reuben",

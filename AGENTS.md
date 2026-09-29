@@ -1,4 +1,4 @@
-# com-etzhayyim-danjo — CLAUDE.md
+# com-etzhayyim-danjo — AGENTS.md
 
 ## Identity
 
@@ -270,4 +270,4 @@ python -c "from kotodama.cells.danjo_diet_statement_index import _r0_marker" 2>&
 - `/90-docs/adr/2605301400-tadori-onchain-tracing-actor-and-kotoba-eavt-migration.md` — tadori (kotoba-native sibling)
 - `/CHARTER-RIDER.md` — License + Rider canonical text
 - `/COUNCIL.md` — Bootstrap Council roster + RFP
-- `/CLAUDE.md` — Religious-corp status table
+- `/AGENTS.md` — Religious-corp status table
